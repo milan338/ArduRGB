@@ -8,10 +8,9 @@
 #include "effects/RainbowCycle.h"
 #include "effects/SolidColour.h"
 
-// Effect specific definitions
-// bool rainbow_cycle_setup = true; // Make it so when the mode is changed the setup variable is always reset
-
 // Set up a way to track last effect
+
+#define SERIAL_TERMINATE 255
 
 #define BAUDRATE 9600
 
@@ -36,9 +35,15 @@ uint8_t G = 0;
 uint8_t B = 0;
 
 uint16_t serial_timeout_ms = 2000;
-uint32_t time_now = 0;
-uint32_t effect_delay = 25;
-byte serial_input;
+uint32_t time_now_ms = 0;
+uint32_t effect_delay_ms = 25;
+// Store serial input
+uint8_t serial_counter = 0;
+// byte serial_input;
+// const byte serial_terminate = 255;
+byte serial_strip;
+byte serial_mode;
+
 bool effect_setup = true; // Will a universal setup bool work?
 
 void setBrightness(uint8_t brightness)
@@ -66,15 +71,37 @@ void setup()
 
 void loop()
 {
-  if (Serial.available())
+  while (Serial.available())
   {
-    serial_input = Serial.read();
+    int serial_input = readSerial(serial_timeout_ms);
     // Debug
     Serial.println(serial_input);
+    // Handle timeout
+    if (serial_input == -1)
+    {
+      serial_strip = 0;
+      serial_mode = 0;
+      serial_counter = 0;
+    }
+    else if (serial_input == SERIAL_TERMINATE)
+    {
+      serial_counter = 0;
+    }
+    else
+    {
+      switch (serial_counter)
+      {
+      case 0:
+        serial_strip = (byte)serial_input;
+      case 1:
+        serial_mode = (byte)serial_input;
+      }
+    }
     effect_setup = true;
   }
 
-  switch (serial_input)
+  // switch (serial_input)
+  switch (serial_mode)
   {
   case 1:
     effect_setup = false;
@@ -84,7 +111,7 @@ void loop()
   case 3: // TODO sending int 3 freezes communication
     setColour(LED_NUM_0, led_array_0, serial_timeout_ms, R, G, B);
   case 4:
-    cycle(effect_delay, time_now, led_array_0, led_hue_0, effect_setup);
+    cycle(effect_delay_ms, time_now_ms, led_array_0, led_hue_0, effect_setup);
   }
 
   FastLED.show();
