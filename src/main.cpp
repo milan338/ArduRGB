@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include <FastLED.h>
-// #include "serial/ReadSerial.h"
+#include <ReadSerial.h>
 
 // <<<<<<<<<< USER DEFINITIONS >>>>>>>>>> //
 
 // Effect libraries
+#include "effects/SetBrightness.h"
 #include "effects/RainbowCycle.h"
 #include "effects/SolidColour.h"
+#include "effects/FadeBlack.h"
 
 // Set up a way to track last effect
 
@@ -38,13 +40,13 @@ uint32_t effect_delay_ms = 25;
 // byte serial_input;
 // const byte serial_terminate = 255;
 byte serial_strip;
-byte serial_mode;
+byte serial_mode = 0;
 byte last_mode = 0;
 
 uint8_t serial_counter = 0;
 bool terimated = false;
 
-bool effect_setup = true; // Will a universal setup bool work?
+bool effect_setup = true;
 
 void setup()
 {
@@ -61,6 +63,7 @@ void setup()
 
 void loop()
 {
+  // Read one message byte
   if (Serial.available())
   {
     int serial_input = Serial.read();
@@ -71,7 +74,6 @@ void loop()
     {
       if (serial_input == SERIAL_TERMINATE)
       {
-        Serial.println("terminate");
         // Beginning of message
         if (!terimated)
         {
@@ -80,7 +82,6 @@ void loop()
         // End of message
         else
         {
-          Serial.println("break");
           terimated = false;
           serial_counter = 0;
         }
@@ -88,36 +89,39 @@ void loop()
       // Inside message contents
       else if (terimated)
       {
-        Serial.println("inside");
         switch (serial_counter)
         {
         case 0:
           serial_strip = serial_input;
+          serial_counter++;
+          break;
         case 1:
           last_mode = serial_mode;
           serial_mode = serial_input;
+          break;
         }
-        serial_counter++;
+        effect_setup = true;
       }
-      effect_setup = true;
+      // Clear noise
+      else
+      {
+        while (Serial.available())
+        {
+          Serial.read();
+        }
+      }
     }
   }
-  // Whole message has been read
+  // Not reading message
   if (!terimated)
   {
     switch (serial_mode)
     {
     case 1:
-      Serial.println("bright");
-      effect_setup = false;
-      FastLED.setBrightness(Serial.read());
-      serial_mode = last_mode;
-      FastLED.show();
+      setBrightness(effect_setup, serial_mode, last_mode, NULL);
       break;
     case 2:
-      Serial.println("clear");
-      FastLED.clear(true);
-      serial_mode = 0;
+      fadeBlack(serial_mode, led_array_0);
       break;
     case 3:
       Serial.println("solid");

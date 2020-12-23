@@ -23,4 +23,4 @@ void cycle(uint32_t delay, uint32_t &time_now, CRGBArray<SIZE> &led_array, uint8
     }
 }
 
-#endif //RAINBOWCYCLE_H
+#endif // RAINBOWCYCLE_H

@@ -3,6 +3,6 @@
 
 #include <Arduino.h>
 
-int readSerial(uint16_t timeout);
+int readSerial();
 
-#endif //READSERIAL_H
+#endif // READSERIAL_H

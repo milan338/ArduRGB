@@ -26,4 +26,4 @@ void setColour(uint16_t led_num, CRGBArray<SIZE> &led_array)
     fill_solid(led_array, led_num, CRGB(R, G, B));
 }
 
-#endif //SOLIDCOLOUR_H
+#endif // SOLIDCOLOUR_H

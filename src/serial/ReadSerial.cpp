@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "ReadSerial.h"
+#include <ReadSerial.h>
 
 #define TIMEOUT_MS 2000
 
@@ -13,6 +13,10 @@ int readSerial()
             if (Serial.available())
                 return Serial.read();
         }
+        return -1;
     }
-    return -1;
+    else
+    {
+        return Serial.read();
+    }
 }
