@@ -1,21 +1,18 @@
 #include <Arduino.h>
 #include "ReadSerial.h"
 
-int readSerial(uint16_t timeout)
+#define TIMEOUT_MS 2000
+
+int readSerial()
 {
     if (!Serial.available())
     {
-        uint16_t time = millis();
-        while (timeout - time > 0)
+        uint32_t time_now_ms = millis();
+        while (millis() - time_now_ms < TIMEOUT_MS)
         {
             if (Serial.available())
                 return Serial.read();
-            else
-                time = millis();
         }
     }
-    if (Serial.available())
-        return Serial.read();
-    else
-        return -1;
+    return -1;
 }

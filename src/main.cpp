@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#include "serial/ReadSerial.h"
+// #include "serial/ReadSerial.h"
 
 // <<<<<<<<<< USER DEFINITIONS >>>>>>>>>> //
 
@@ -11,6 +11,7 @@
 // Set up a way to track last effect
 
 #define SERIAL_TERMINATE 255
+#define SERIAL_MAX_ATTEMPTS 10
 
 #define BAUDRATE 9600
 
@@ -30,31 +31,20 @@ uint8_t led_hue_0[LED_NUM_0];
 
 // <<<<<<<<<<<<<<<<<<< >>>>>>>>>>>>>>>>>> //
 
-uint8_t R = 0;
-uint8_t G = 0;
-uint8_t B = 0;
-
-uint16_t serial_timeout_ms = 2000;
 uint32_t time_now_ms = 0;
 uint32_t effect_delay_ms = 25;
 // Store serial input
-uint8_t serial_counter = 0;
+// uint8_t serial_counter = 0;
 // byte serial_input;
 // const byte serial_terminate = 255;
 byte serial_strip;
 byte serial_mode;
+byte last_mode = 0;
+
+uint8_t serial_counter = 0;
+bool terimated = false;
 
 bool effect_setup = true; // Will a universal setup bool work?
-
-void setBrightness(uint8_t brightness)
-{
-  FastLED.setBrightness(brightness);
-}
-
-void setOff()
-{
-  FastLED.clear();
-}
 
 void setup()
 {
@@ -71,48 +61,74 @@ void setup()
 
 void loop()
 {
-  while (Serial.available())
+  if (Serial.available())
   {
-    int serial_input = readSerial(serial_timeout_ms);
+    int serial_input = Serial.read();
     // Debug
     Serial.println(serial_input);
-    // Handle timeout
-    if (serial_input == -1)
+    // Deal with invalid reads
+    if (serial_input != -1)
     {
-      serial_strip = 0;
-      serial_mode = 0;
-      serial_counter = 0;
-    }
-    else if (serial_input == SERIAL_TERMINATE)
-    {
-      serial_counter = 0;
-    }
-    else
-    {
-      switch (serial_counter)
+      if (serial_input == SERIAL_TERMINATE)
       {
-      case 0:
-        serial_strip = (byte)serial_input;
-      case 1:
-        serial_mode = (byte)serial_input;
+        Serial.println("terminate");
+        // Beginning of message
+        if (!terimated)
+        {
+          terimated = true;
+        }
+        // End of message
+        else
+        {
+          Serial.println("break");
+          terimated = false;
+          serial_counter = 0;
+        }
       }
+      // Inside message contents
+      else if (terimated)
+      {
+        Serial.println("inside");
+        switch (serial_counter)
+        {
+        case 0:
+          serial_strip = serial_input;
+        case 1:
+          last_mode = serial_mode;
+          serial_mode = serial_input;
+        }
+        serial_counter++;
+      }
+      effect_setup = true;
     }
-    effect_setup = true;
   }
-
-  // switch (serial_input)
-  switch (serial_mode)
+  // Whole message has been read
+  if (!terimated)
   {
-  case 1:
-    effect_setup = false;
-    setBrightness(readSerial(serial_timeout_ms));
-  case 2:
-    setOff();
-  case 3: // TODO sending int 3 freezes communication
-    setColour(LED_NUM_0, led_array_0, serial_timeout_ms, R, G, B);
-  case 4:
-    cycle(effect_delay_ms, time_now_ms, led_array_0, led_hue_0, effect_setup);
+    switch (serial_mode)
+    {
+    case 1:
+      Serial.println("bright");
+      effect_setup = false;
+      FastLED.setBrightness(Serial.read());
+      serial_mode = last_mode;
+      FastLED.show();
+      break;
+    case 2:
+      Serial.println("clear");
+      FastLED.clear(true);
+      serial_mode = 0;
+      break;
+    case 3:
+      Serial.println("solid");
+      setColour(LED_NUM_0, led_array_0);
+      serial_mode = 0;
+      FastLED.show();
+      break;
+    case 4:
+      cycle(effect_delay_ms, time_now_ms, led_array_0, led_hue_0, effect_setup);
+      FastLED.show();
+      break;
+    }
   }
-
-  FastLED.show();
 }
