@@ -1,18 +1,18 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#include <ReadSerial.h>
+#include <serial_read.h>
+#include <definitions.h>
 
 // <<<<<<<<<< USER DEFINITIONS >>>>>>>>>> //
 
 // Effect libraries
-#include "effects/SetBrightness.h"
-#include "effects/RainbowCycle.h"
-#include "effects/SolidColour.h"
-#include "effects/FadeBlack.h"
+#include "effects/set_brightness.h"
+#include "effects/rainbow_cycle.h"
+#include "effects/solid_color.h"
+#include "effects/fade_black.h"
 
 // Set up a way to track last effect
 
-#define SERIAL_TERMINATE 255
 #define SERIAL_MAX_ATTEMPTS 10
 
 #define BAUDRATE 9600
@@ -39,23 +39,24 @@ uint32_t effect_delay_ms = 25;
 // uint8_t serial_counter = 0;
 // byte serial_input;
 // const byte serial_terminate = 255;
-byte serial_strip;
-byte serial_mode = 0;
-byte last_mode = 0;
+uint8_t serial_strip;
+uint8_t serial_mode = 0;
+uint8_t last_mode = 0;
 
 uint8_t serial_counter = 0;
-bool terimated = false;
+bool reading_message = false;
 
 bool effect_setup = true;
 
 void setup()
 {
   Serial.begin(BAUDRATE);
+  Serial.setTimeout(SERIAL_TIMEOUT);
   // Recovery delay
   delay(1);
   FastLED.setBrightness(DEFAULT_BRIGHTNESS);
   // Initialise each LED strip
-  FastLED.addLeds<NEOPIXEL, LED_PIN_0>(led_array_0, LED_NUM_0);
+  FastLED.addLeds<WS2812B, LED_PIN_0, COLOR_ORDER>(led_array_0, LED_NUM_0);
   // Debug
   if (Serial.available())
     Serial.println("connected");
@@ -72,22 +73,19 @@ void loop()
     // Deal with invalid reads
     if (serial_input != -1)
     {
-      if (serial_input == SERIAL_TERMINATE)
+      // Beginning of message
+      if (serial_input == SERIAL_BEGIN && !reading_message)
       {
-        // Beginning of message
-        if (!terimated)
-        {
-          terimated = true;
-        }
-        // End of message
-        else
-        {
-          terimated = false;
-          serial_counter = 0;
-        }
+        reading_message = true;
+      }
+      // End of message
+      else if (serial_input == SERIAL_TERMINATE && reading_message)
+      {
+        reading_message = false;
+        serial_counter = 0;
       }
       // Inside message contents
-      else if (terimated)
+      else if (reading_message)
       {
         switch (serial_counter)
         {
@@ -102,18 +100,19 @@ void loop()
         }
         effect_setup = true;
       }
-      // Clear noise
+      // Remove serial input not part of valid message
       else
       {
         while (Serial.available())
         {
+          Serial.println("clearing");
           Serial.read();
         }
       }
     }
   }
   // Not reading message
-  if (!terimated)
+  if (!reading_message)
   {
     switch (serial_mode)
     {
@@ -125,7 +124,7 @@ void loop()
       break;
     case 3:
       Serial.println("solid");
-      setColour(LED_NUM_0, led_array_0);
+      setColour(led_array_0);
       serial_mode = 0;
       FastLED.show();
       break;

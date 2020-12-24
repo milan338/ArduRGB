@@ -4,21 +4,22 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-#define FADE_BY 4
+#define FADE_BY 5
 
 template <int SIZE>
-void fadeBlack(byte &current_mode, CRGBArray<SIZE> &led_array)
+void fadeBlack(uint8_t &current_mode, CRGBArray<SIZE> &led_array)
 {
     // Set current mode to none
     current_mode = 0;
     // Fade LED strip to black
-    for (int i = 0; i < 256 / FADE_BY; i++)
+    for (int i = 0; i < 256; i++)
     {
         fadeToBlackBy(led_array, SIZE, FADE_BY);
         FastLED.show();
     }
-    // Clear LED strip
-    FastLED.clear(true);
+    // Ensure all LEDs cleared
+    fill_solid(led_array, SIZE, CRGB(0, 0, 0));
+    FastLED.show();
 }
 
 #endif // FADEBLACK_H

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
-#include <ReadSerial.h>
+#include <serial_read.h>
 
 void setBrightness(bool &effect_setup, byte &current_mode, byte last_mode, char *argv[]);
 
