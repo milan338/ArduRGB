@@ -9,7 +9,7 @@ void cycle(uint32_t delay, uint32_t &time_now, CRGBArray<SIZE> &led_array, uint8
     if (setup)
     {
         // Set initial colours that will be shifted through the main sequence
-        for (uint16_t i = 0; i < SIZE; i++)
+        for (int i = 0; i < SIZE; i++)
             hue[i] = 255 / SIZE * i;
         setup = false;
     }
@@ -18,7 +18,7 @@ void cycle(uint32_t delay, uint32_t &time_now, CRGBArray<SIZE> &led_array, uint8
     {
         time_now = millis();
         // Main sequence
-        for (uint16_t i = 0; i < SIZE; i++)
+        for (int i = 0; i < SIZE; i++)
             led_array[i] = CHSV(hue[i]--, 255, 255);
     }
 }

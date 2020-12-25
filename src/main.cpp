@@ -35,10 +35,6 @@ uint8_t led_hue_0[LED_NUM_0];
 
 uint32_t time_now_ms = 0;
 uint32_t effect_delay_ms = 25;
-// Store serial input
-// uint8_t serial_counter = 0;
-// byte serial_input;
-// const byte serial_terminate = 255;
 uint8_t serial_strip;
 uint8_t serial_mode = 0;
 uint8_t last_mode = 0;
@@ -83,6 +79,7 @@ void loop()
       {
         reading_message = false;
         serial_counter = 0;
+        effect_setup = true;
       }
       // Inside message contents
       else if (reading_message)
@@ -98,7 +95,6 @@ void loop()
           serial_mode = serial_input;
           break;
         }
-        effect_setup = true;
       }
       // Remove serial input not part of valid message
       else
@@ -117,13 +113,12 @@ void loop()
     switch (serial_mode)
     {
     case 1:
-      setBrightness(effect_setup, serial_mode, last_mode, NULL);
-      break;
-    case 2:
       fadeBlack(serial_mode, led_array_0);
       break;
+    case 2:
+      setBrightness(effect_setup, serial_mode, last_mode, NULL);
+      break;
     case 3:
-      Serial.println("solid");
       setColour(led_array_0);
       serial_mode = 0;
       FastLED.show();
