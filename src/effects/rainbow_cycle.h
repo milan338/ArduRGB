@@ -3,24 +3,29 @@
 
 #include <FastLED.h>
 
-template <int SIZE>
-void cycle(uint32_t delay, uint32_t &time_now, CRGBArray<SIZE> &led_array, uint8_t hue[], bool &setup)
+class RainbowCycle
 {
-    if (setup)
+public:
+    template <int SIZE>
+    static void run(uint32_t delay, uint32_t &time_now, CRGBArray<SIZE> &led_array, uint8_t hue[], bool &setup)
     {
-        // Set initial colours that will be shifted through the main sequence
-        for (int i = 0; i < SIZE; i++)
-            hue[i] = 255 / SIZE * i;
-        setup = false;
+        if (setup)
+        {
+            // Set initial colours that will be shifted through the main sequence
+            for (int i = 0; i < SIZE; i++)
+                hue[i] = 255 / SIZE * i;
+            setup = false;
+        }
+        // Control speed of effect
+        if (millis() - delay >= time_now)
+        {
+            time_now = millis();
+            // Main sequence
+            for (int i = 0; i < SIZE; i++)
+                led_array[i] = CHSV(hue[i]--, 255, 255);
+        }
+        FastLED.show();
     }
-    // Control speed of effect
-    if (millis() - delay >= time_now)
-    {
-        time_now = millis();
-        // Main sequence
-        for (int i = 0; i < SIZE; i++)
-            led_array[i] = CHSV(hue[i]--, 255, 255);
-    }
-}
+};
 
 #endif // RAINBOWCYCLE_H

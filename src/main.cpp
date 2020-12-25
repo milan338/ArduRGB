@@ -113,19 +113,17 @@ void loop()
     switch (serial_mode)
     {
     case 1:
-      fadeBlack(serial_mode, led_array_0);
+      FadeBlack::run(serial_mode, led_array_0);
       break;
     case 2:
-      setBrightness(effect_setup, serial_mode, last_mode, NULL);
+      SetBrightness::run(effect_setup, serial_mode, last_mode, NULL);
       break;
     case 3:
-      setColour(led_array_0);
+      SolidColor::run(led_array_0);
       serial_mode = 0;
-      FastLED.show();
       break;
     case 4:
-      cycle(effect_delay_ms, time_now_ms, led_array_0, led_hue_0, effect_setup);
-      FastLED.show();
+      RainbowCycle::run(effect_delay_ms, time_now_ms, led_array_0, led_hue_0, effect_setup);
       break;
     }
   }

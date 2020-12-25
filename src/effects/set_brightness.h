@@ -5,6 +5,10 @@
 #include <FastLED.h>
 #include <serial_read.h>
 
-void setBrightness(bool &effect_setup, byte &current_mode, byte last_mode, char *argv[]);
+class SetBrightness
+{
+public:
+    static void run(bool &effect_setup, byte &current_mode, byte last_mode, char *argv[]);
+};
 
 #endif // SETBRIGHTNESS_H
