@@ -6,26 +6,7 @@
 class RainbowCycle
 {
 public:
-    template <int SIZE>
-    static void run(uint32_t delay, uint32_t &time_now, CRGBArray<SIZE> &led_array, uint8_t hue[], bool &setup)
-    {
-        if (setup)
-        {
-            // Set initial colours that will be shifted through the main sequence
-            for (int i = 0; i < SIZE; i++)
-                hue[i] = 255 / SIZE * i;
-            setup = false;
-        }
-        // Control speed of effect
-        if (millis() - delay >= time_now)
-        {
-            time_now = millis();
-            // Main sequence
-            for (int i = 0; i < SIZE; i++)
-                led_array[i] = CHSV(hue[i]--, 255, 255);
-        }
-        FastLED.show();
-    }
+    static void run(CRGBSet &led_array, uint8_t led_hue[], uint32_t led_num, bool &effect_setup, uint32_t effect_delay, uint32_t &time_now);
 };
 
 #endif // RAINBOWCYCLE_H

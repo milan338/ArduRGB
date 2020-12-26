@@ -1,15 +1,14 @@
 #include <Arduino.h>
 #include <FastLED.h>
 #include <serial_read.h>
-#include <definitions.h>
 #include "set_brightness.h"
 
-void SetBrightness::run(bool &effect_setup, uint8_t &current_mode, uint8_t last_mode, char *argv[])
+void SetBrightness::run(byte &serial_mode, byte last_mode, bool &effect_setup)
 {
     // Don't restart already running effects
     effect_setup = false;
     // Re-run last run effect to refresh with new brightness
-    current_mode = last_mode;
+    serial_mode = last_mode;
     // Set global brightness
     uint8_t serial_buffer[2];
     if (readSerial(serial_buffer, 2) == 1)

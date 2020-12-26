@@ -9,21 +9,7 @@
 class FadeBlack
 {
 public:
-    template <int SIZE>
-    static void run(uint8_t &current_mode, CRGBArray<SIZE> &led_array)
-    {
-        // Set current mode to none
-        current_mode = 0;
-        // Fade LED strip to black
-        for (uint8_t i = 0; i < 256 / FADE_BY; i++)
-        {
-            fadeToBlackBy(led_array, SIZE, FADE_BY);
-            FastLED.show();
-        }
-        // Ensure all LEDs cleared
-        fill_solid(led_array, SIZE, CRGB(0, 0, 0));
-        FastLED.show();
-    }
+    static void run(CRGBSet &led_array, uint32_t led_num, uint8_t &serial_mode);
 };
 
 #endif // FADEBLACK_H

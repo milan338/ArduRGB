@@ -8,7 +8,7 @@
 class SetBrightness
 {
 public:
-    static void run(bool &effect_setup, byte &current_mode, byte last_mode, char *argv[]);
+    static void run(byte &serial_mode, byte last_mode, bool &effect_setup);
 };
 
 #endif // SETBRIGHTNESS_H
