@@ -36,6 +36,9 @@ typedef struct CRGBHueDict
   uint16_t strip_len;
 } CRGBHueDict;
 
+// Check if multiple led arrays work
+// i.e. try making two arrays, and see if my one led still works as it should
+// also add support for virtual led strips on the same strip
 CRGBSet led_array_0(led_array(0, LED_NUM_0)); // Created during build
 uint8_t led_hues_0[LED_NUM_0];                // Created during build
 
@@ -51,12 +54,14 @@ uint8_t last_mode = 0;
 uint32_t time_now = 0;
 uint32_t effect_delay = 25;
 
+char serial_mode_input[256];
+char current_mode[256];
+char previous_mode[256];
+
 uint8_t serial_counter = 0;
 bool reading_message = false;
 
 bool effect_setup = true;
-
-void runEffect();
 
 void setup()
 {
@@ -64,13 +69,52 @@ void setup()
   delay(2000);
   // Initialise each LED strip
   // FastLED.addLeds<WS2812B, LED_PIN_0, LED_ORDER_0>(led_array_0, LED_NUM_0);
-  FastLED.addLeds<LED_TYPE_0, LED_PIN_0, LED_ORDER_0>(led_array, 0, LED_NUM_0); // Created during build
+  FastLED.addLeds<WS2812B, LED_PIN_0, LED_ORDER_0>(led_array_0, LED_NUM_0); // Created during build
   // Begin serial
   Serial.begin(BAUDRATE);
   Serial.setTimeout(SERIAL_TIMEOUT);
   // Recovery delay
   delay(1);
   FastLED.setBrightness(DEFAULT_BRIGHTNESS);
+}
+
+void clearSerial()
+{
+  Serial.println("clearing");
+  while (Serial.available())
+  {
+    Serial.println("clearing");
+    Serial.read();
+  }
+  reading_message = false;
+  effect_setup = true;
+}
+
+void copyCharArray(char from[], char to[], int length)
+{
+  for (int i = 0; i < length; i++)
+    to[i] = from[i];
+  to[length] = '\0';
+}
+
+void runEffect()
+{
+  if (!strcmp(current_mode, "fadeblack"))
+  {
+    FadeBlack::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, serial_mode);
+  }
+  else if (!strcmp(current_mode, "setbright"))
+  {
+    SetBrightness::run(serial_mode, last_mode, effect_setup);
+  }
+  else if (!strcmp(current_mode, "solidcolor"))
+  {
+    SolidColor::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len);
+  }
+  else if (!strcmp(current_mode, "rainbowcycle"))
+  {
+    RainbowCycle::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].hue_array, led_arrays[current_strip].strip_len, effect_setup, effect_delay, time_now);
+  }
 }
 
 void loop()
@@ -88,13 +132,14 @@ void loop()
       if (serial_input == SERIAL_BEGIN && !reading_message)
       {
         reading_message = true;
+        serial_counter = 0;
+        memset(serial_mode_input, 0, sizeof(serial_mode_input));
       }
       // End of message
       else if (serial_input == SERIAL_TERMINATE && reading_message)
       {
-        reading_message = false;
-        serial_counter = 0;
-        effect_setup = true;
+        clearSerial();
+        // reading_message = false;
       }
       // Inside message contents
       else if (reading_message)
@@ -102,24 +147,32 @@ void loop()
         switch (serial_counter)
         {
         case 0:
+          // Set currently selected strip
           current_strip = serial_input;
           serial_counter++;
           break;
         case 1:
-          last_mode = serial_mode;
-          serial_mode = serial_input;
+          // Store char array input as current mode
+          if (Serial.readBytes(serial_mode_input, serial_input) != (uint32_t)serial_input)
+            clearSerial();
+          else
+          {
+            // Store previous mode
+            copyCharArray(current_mode, previous_mode, serial_input);
+            // Store current mode
+            copyCharArray(serial_mode_input, current_mode, serial_input);
+            Serial.println("current mode");
+            Serial.println(current_mode);
+            // last_mode = serial_mode;
+            // serial_mode = serial_input;
+          }
+          serial_counter++;
           break;
         }
       }
       // Remove serial input not part of valid message
       else
-      {
-        while (Serial.available())
-        {
-          Serial.println("clearing");
-          Serial.read();
-        }
-      }
+        clearSerial();
     }
   }
   // Not reading message
@@ -127,25 +180,5 @@ void loop()
   {
     runEffect();
     // uint32_t led_num = strip_lengths[0];
-  }
-}
-
-void runEffect()
-{
-  switch (serial_mode)
-  {
-  case 1:
-    FadeBlack::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, serial_mode);
-    break;
-  case 2:
-    SetBrightness::run(serial_mode, last_mode, effect_setup);
-    break;
-  case 3:
-    SolidColor::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len);
-    serial_mode = 0;
-    break;
-  case 4:
-    RainbowCycle::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].hue_array, led_arrays[current_strip].strip_len, effect_setup, effect_delay, time_now);
-    break;
   }
 }
