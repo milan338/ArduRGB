@@ -54,9 +54,9 @@ uint8_t last_mode = 0;
 uint32_t time_now = 0;
 uint32_t effect_delay = 25;
 
-char serial_mode_input[256];
-char current_mode[256];
-char previous_mode[256];
+char serial_mode_input[16];
+char current_mode[16];
+char previous_mode[16];
 
 uint8_t serial_counter = 0;
 bool reading_message = false;
@@ -102,7 +102,7 @@ void copyCharArray(char from[], char to[], int length)
   to[length] = '\0';
 }
 
-void runEffect()
+void runEffect() // Created during build
 {
   switch (hash(current_mode))
   {
