@@ -49,14 +49,12 @@ uint8_t led_hue[LEDS_NUM];
 uint32_t strip_lengths[1] = {60}; // Created during build
 
 uint8_t current_strip = 0;
-uint8_t serial_mode = 0;
-uint8_t last_mode = 0;
 uint32_t time_now = 0;
 uint32_t effect_delay = 25;
 
 char serial_mode_input[16];
-char current_mode[16];
-char previous_mode[16];
+uint32_t current_mode;
+uint32_t previous_mode;
 
 uint8_t serial_counter = 0;
 bool reading_message = false;
@@ -104,16 +102,16 @@ void copyCharArray(char from[], char to[], int length)
 
 void runEffect() // Created during build
 {
-  switch (hash(current_mode))
+  switch (current_mode)
   {
   case hash("fadeblack"):
-    FadeBlack::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, serial_mode);
+    FadeBlack::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, current_mode);
     break;
   case hash("setbright"):
-    SetBrightness::run(serial_mode, last_mode, effect_setup);
+    SetBrightness::run(current_mode, previous_mode, effect_setup);
     break;
   case hash("solidcolor"):
-    SolidColor::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len);
+    SolidColor::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, current_mode);
     break;
   case hash("rainbowcycle"):
     RainbowCycle::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].hue_array, led_arrays[current_strip].strip_len, effect_setup, effect_delay, time_now);
@@ -162,9 +160,10 @@ void loop()
           else
           {
             // Store previous mode
-            copyCharArray(current_mode, previous_mode, serial_input);
+            previous_mode = current_mode;
             // Store current mode
-            copyCharArray(serial_mode_input, current_mode, serial_input);
+            serial_mode_input[serial_input] = '\0';
+            current_mode = hash(serial_mode_input);
             Serial.println("current mode");
             Serial.println(current_mode);
             // last_mode = serial_mode;

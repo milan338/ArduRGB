@@ -9,7 +9,7 @@
 class FadeBlack
 {
 public:
-    static void run(CRGBSet &led_array, uint32_t led_num, uint8_t &serial_mode);
+    static void run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode);
 };
 
 #endif // FADEBLACK_H

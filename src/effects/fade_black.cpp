@@ -2,7 +2,7 @@
 #include <FastLED.h>
 #include "fade_black.h"
 
-void FadeBlack::run(CRGBSet &led_array, uint32_t led_num, uint8_t &serial_mode)
+void FadeBlack::run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode)
 {
     // Set current mode to none
     serial_mode = 0;

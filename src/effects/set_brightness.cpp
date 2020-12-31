@@ -3,7 +3,7 @@
 #include <serial_read.h>
 #include "set_brightness.h"
 
-void SetBrightness::run(byte &serial_mode, byte last_mode, bool &effect_setup)
+void SetBrightness::run(uint32_t &serial_mode, uint32_t last_mode, bool &effect_setup)
 {
     // Don't restart already running effects
     effect_setup = false;

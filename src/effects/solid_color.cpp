@@ -3,8 +3,10 @@
 #include <definitions.h>
 #include "solid_color.h"
 
-void SolidColor::run(CRGBSet &led_array, uint32_t led_num)
+void SolidColor::run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode)
 {
+    // Set current mode to none
+    serial_mode = 0;
     uint8_t serial_buffer[4];
     if (readSerial(serial_buffer, 4) == 1)
     {
