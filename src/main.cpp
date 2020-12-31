@@ -78,6 +78,11 @@ void setup()
   FastLED.setBrightness(DEFAULT_BRIGHTNESS);
 }
 
+constexpr inline uint32_t hash(const char *effect, uint32_t h = 0)
+{
+  return !effect[h] ? 5381 : (hash(effect, h + 1) * 33) ^ effect[h];
+}
+
 void clearSerial()
 {
   Serial.println("clearing");
@@ -99,21 +104,20 @@ void copyCharArray(char from[], char to[], int length)
 
 void runEffect()
 {
-  if (!strcmp(current_mode, "fadeblack"))
+  switch (hash(current_mode))
   {
+  case hash("fadeblack"):
     FadeBlack::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, serial_mode);
-  }
-  else if (!strcmp(current_mode, "setbright"))
-  {
+    break;
+  case hash("setbright"):
     SetBrightness::run(serial_mode, last_mode, effect_setup);
-  }
-  else if (!strcmp(current_mode, "solidcolor"))
-  {
+    break;
+  case hash("solidcolor"):
     SolidColor::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len);
-  }
-  else if (!strcmp(current_mode, "rainbowcycle"))
-  {
+    break;
+  case hash("rainbowcycle"):
     RainbowCycle::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].hue_array, led_arrays[current_strip].strip_len, effect_setup, effect_delay, time_now);
+    break;
   }
 }
 
