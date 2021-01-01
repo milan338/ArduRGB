@@ -17,5 +17,5 @@ void SolidColor::run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode
         FastLED.show();
     }
     else
-        Serial.println("Failed to read serial input");
+        Serial.println(F("Failed to read serial input"));
 }
