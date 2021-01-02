@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
-#include <serial_read.h>
 
 #define SETBRIGHT EFFECT
 

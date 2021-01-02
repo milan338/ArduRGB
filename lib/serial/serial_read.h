@@ -3,6 +3,6 @@
 
 #include <Arduino.h>
 
-uint8_t readSerial(uint8_t serial_buffer[], uint8_t buffer_size);
+void readSerial();
 
 #endif // SERIALREAD_H

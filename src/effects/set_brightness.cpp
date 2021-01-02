@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#include <serial_read.h>
 #include "set_brightness.h"
 
 void SetBrightness::run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup, uint8_t led_args[])

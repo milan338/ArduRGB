@@ -2,7 +2,6 @@
 #define SOLIDCOLOR_H
 
 #include <FastLED.h>
-#include <serial_Read.h>
 #include <definitions.h>
 
 #define SOLIDCOLOR EFFECT

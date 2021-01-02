@@ -1,5 +1,4 @@
 #include <FastLED.h>
-#include <serial_Read.h>
 #include <definitions.h>
 #include "solid_color.h"
 
