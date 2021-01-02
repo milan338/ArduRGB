@@ -5,10 +5,12 @@
 #include <FastLED.h>
 #include <serial_read.h>
 
+#define SETBRIGHT EFFECT
+
 class SetBrightness
 {
 public:
-    static void run(uint32_t &serial_mode, uint32_t last_mode, bool &effect_setup);
+    static void run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup);
 };
 
 #endif // SETBRIGHTNESS_H

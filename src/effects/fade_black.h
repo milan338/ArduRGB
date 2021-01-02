@@ -3,13 +3,14 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
+#include <definitions.h>
 
-#define FADE_BY 4
+#define FADEBLACK EFFECT
 
 class FadeBlack
 {
 public:
-    static void run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode);
+    static void run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode);
 };
 
 #endif // FADEBLACK_H

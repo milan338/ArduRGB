@@ -1,5 +1,7 @@
 // Global definitions
 
+#define FADE_BY 4 // Controls fade speed between colours
+
 // ------------------ SERIAL ------------------ //
 #define SERIAL_BEGIN 254     // Message start byte
 #define SERIAL_TERMINATE 255 // Message end byte

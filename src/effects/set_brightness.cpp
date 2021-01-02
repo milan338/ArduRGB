@@ -3,12 +3,12 @@
 #include <serial_read.h>
 #include "set_brightness.h"
 
-void SetBrightness::run(uint32_t &serial_mode, uint32_t last_mode, bool &effect_setup)
+void SetBrightness::run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup)
 {
     // Don't restart already running effects
     effect_setup = false;
     // Re-run last run effect to refresh with new brightness
-    serial_mode = last_mode;
+    current_mode = previous_mode;
     // Set global brightness
     uint8_t serial_buffer[2];
     if (readSerial(serial_buffer, 2) == 1)

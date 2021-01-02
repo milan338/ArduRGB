@@ -2,10 +2,10 @@
 #include <FastLED.h>
 #include "fade_black.h"
 
-void FadeBlack::run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode)
+void FadeBlack::run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode)
 {
     // Set current mode to none
-    serial_mode = 0;
+    current_mode = 0;
     // Fade LED strip to black
     for (uint8_t i = 0; i < 256 / FADE_BY; i++)
     {
