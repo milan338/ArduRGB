@@ -11,24 +11,13 @@
 #include "effects/solid_color.h"
 #include "effects/fade_black.h"
 
-// Set up a way to track last effect
-
-#define SERIAL_MAX_ATTEMPTS 10
-
-#define BAUDRATE 9600
-
-#define DEFAULT_MODE 01
-#define DEFAULT_BRIGHTNESS 50
-
-// // Array for each LED strip
-// CRGBArray<LED_NUM_0> led_array_0;
-// // Hue array for each LED strip
-// uint8_t led_hue_0[LED_NUM_0];
+#define DEFAULT_BRIGHTNESS 50 // TODO replace with storing last brightness and if not found default to 50
 
 // <<<<<<<<<<<<<<<<<<< >>>>>>>>>>>>>>>>>> //
-// Main LED array with all LEDs
-CRGBArray<LEDS_NUM> led_array;
+// Physical LED strip arrays from which virtual CRGBSets are created
+CRGBArray<STRIP_PHYSICAL_LEDS_0> leds_0; // Created during build
 
+// Store all relevant information about each LED strip
 typedef struct CRGBHueDict
 {
   CRGBSet crgb_array;
@@ -36,42 +25,39 @@ typedef struct CRGBHueDict
   uint16_t strip_len;
   uint32_t current_mode;
   uint32_t previous_mode;
+  uint32_t current_time;
+  uint32_t refresh_delay;
+  bool effect_setup;
 } CRGBHueDict;
 
-// Check if multiple led arrays work
-// i.e. try making two arrays, and see if my one led still works as it should
-// also add support for virtual led strips on the same strip
-CRGBSet led_array_0(led_array(0, LED_NUM_0)); // Created during build
-uint8_t led_hues_0[LED_NUM_0];                // Created during build
-uint32_t current_mode_0;
-uint32_t previous_mode_0;
+// Array for each led and associated hue values for use in effects
+CRGBSet led_array_0(leds_0(0, LED_NUM_0 - 1)); // Created during build
+uint8_t led_hues_0[LED_NUM_0];                 // Created during build
+
+CRGBSet led_array_1(leds_0(LED_NUM_0, LED_NUM_0 + LED_NUM_1 - 1)); // Created during build
+uint8_t led_hues_1[LED_NUM_1];                                     // Created during build
 
 CRGBHueDict led_arrays[]{
-    {led_array_0, led_hues_0, LED_NUM_0, current_mode_0, previous_mode_0}};
+    {led_array_0, led_hues_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false},  // Created during build
+    {led_array_1, led_hues_1, LED_NUM_1, 0, 0, 0, LED_DELAY_1, false}}; // Created during build
 
-uint8_t led_hue[LEDS_NUM];
-uint32_t strip_lengths[1] = {60}; // Created during build
-
-uint8_t current_strip = 0;
-uint32_t time_now = 0;
-uint32_t effect_delay = 25;
-
-char serial_mode_input[16];
-// uint32_t current_mode;
-// uint32_t previous_mode;
-
-uint8_t serial_counter = 0;
+// Determine whether to read a message or refresh effects
 bool reading_message = false;
-
-bool effect_setup = true;
+// Store serial input
+char serial_mode_input[16];
+// Store currently selected strip
+uint8_t current_strip = 0;
+// Store current message element to read
+uint8_t serial_counter = 0;
+// Store time for non-blocking delays
+uint32_t time_now = 0;
 
 void setup()
 {
   // Power-up safety delay
   delay(2000);
   // Initialise each LED strip
-  // FastLED.addLeds<WS2812B, LED_PIN_0, LED_ORDER_0>(led_array_0, LED_NUM_0);
-  FastLED.addLeds<WS2812B, LED_PIN_0, LED_ORDER_0>(led_array_0, LED_NUM_0); // Created during build
+  FastLED.addLeds<STRIP_PHYSICAL_TYPE_0, STRIP_PHYSICAL_PIN_0, STRIP_PHYISCAL_ORDER_0>(leds_0, STRIP_PHYSICAL_LEDS_0); // Created during build
   // Begin serial
   Serial.begin(BAUDRATE);
   Serial.setTimeout(SERIAL_TIMEOUT);
@@ -82,6 +68,7 @@ void setup()
 
 constexpr inline uint32_t hash(const char *effect, uint32_t h = 0)
 {
+  // Create numerical hash of character array
   return !effect[h] ? 5381 : (hash(effect, h + 1) * 33) ^ effect[h];
 }
 
@@ -92,9 +79,8 @@ void clearSerial()
   {
     Serial.read();
   }
-  // Reset running effects
+  // Ready to read new message
   reading_message = false;
-  effect_setup = true;
   serial_counter = 0;
 }
 
@@ -105,16 +91,16 @@ void runEffect() // Created during build
     switch (led_arrays[i].current_mode)
     {
     case hash("fadeblack"):
-      FadeBlack::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, led_arrays[i].current_mode);
+      FadeBlack::run(led_arrays[i].crgb_array, led_arrays[i].strip_len, led_arrays[i].current_mode);
       break;
     case hash("setbright"):
-      SetBrightness::run(led_arrays[i].current_mode, led_arrays[i].previous_mode, effect_setup);
+      SetBrightness::run(led_arrays[i].current_mode, led_arrays[i].previous_mode, led_arrays[i].effect_setup);
       break;
     case hash("solidcolor"):
-      SolidColor::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].strip_len, led_arrays[i].current_mode);
+      SolidColor::run(led_arrays[i].crgb_array, led_arrays[i].strip_len, led_arrays[i].current_mode);
       break;
     case hash("rainbowcycle"):
-      RainbowCycle::run(led_arrays[current_strip].crgb_array, led_arrays[current_strip].hue_array, led_arrays[current_strip].strip_len, effect_setup, effect_delay, time_now);
+      RainbowCycle::run(led_arrays[i].crgb_array, led_arrays[i].hue_array, led_arrays[i].strip_len, led_arrays[i].effect_setup, led_arrays[i].refresh_delay, led_arrays[i].current_time);
       break;
     }
   }
@@ -137,11 +123,14 @@ void loop()
         reading_message = true;
         // Clear input buffer
         memset(serial_mode_input, 0, sizeof(serial_mode_input));
+        serial_counter = 0;
       }
       // End of message
       else if (serial_input == SERIAL_TERMINATE && reading_message)
       {
         clearSerial();
+        led_arrays[current_strip].effect_setup = true;
+        // effect_setup = true;
       }
       // Inside message contents
       else if (reading_message)
@@ -189,11 +178,22 @@ void loop()
         clearSerial();
     }
   }
-  // Handle missing terminate byte
+  // Handle serial delay
   else if (serial_counter > 1)
   {
-    clearSerial();
-    Serial.println(F("Did not receive expected terminate byte"));
+    // Wait for serial
+    time_now = millis();
+    while (millis() - time_now < SERIAL_TIMEOUT)
+    {
+      if (Serial.available())
+        break;
+    }
+    // Terminate byte not sent
+    if (!Serial.available())
+    {
+      clearSerial();
+      Serial.println(F("Did not receive expected terminate byte"));
+    }
   }
   // Not reading message
   if (!reading_message)
