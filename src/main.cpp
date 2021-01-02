@@ -1,12 +1,11 @@
+// Libraries
 #include <Arduino.h>
 #include <FastLED.h>
 #include <serial_read.h>
 #include <definitions.h>
 #include <led_strips.h>
 
-// <<<<<<<<<< USER DEFINITIONS >>>>>>>>>> //
-
-// Effect libraries
+// Effects
 #include "effects/set_brightness.h"
 #include "effects/rainbow_cycle.h"
 #include "effects/solid_color.h"
@@ -14,9 +13,8 @@
 
 #define DEFAULT_BRIGHTNESS 50 // TODO replace with storing last brightness and if not found default to 50
 
-// <<<<<<<<<<<<<<<<<<< >>>>>>>>>>>>>>>>>> //
 // Physical LED strip arrays from which virtual CRGBSets are created
-CRGBArray<STRIP_PHYSICAL_LEDS_0> leds_0; // Created during build
+CRGBArray<STRIP_PHYSICAL_LEDS_0> strip_0; // Created during build
 
 // Store all relevant information about each LED strip
 typedef struct CRGBHueDict
@@ -32,13 +30,13 @@ typedef struct CRGBHueDict
 } CRGBHueDict;
 
 // Array for each led and associated hue values for use in effects
-CRGBSet led_array_0(leds_0(0, LED_NUM_0 - 1)); // Created during build
-uint8_t led_hues_0[LED_NUM_0];                 // Created during build
+CRGBSet led_array_0(strip_0(0, LED_NUM_0 - 1)); // Created during build
+uint8_t led_hues_0[LED_NUM_0];                  // Created during build
 
-CRGBSet led_array_1(leds_0(LED_NUM_0, LED_NUM_0 + LED_NUM_1 - 1)); // Created during build
-uint8_t led_hues_1[LED_NUM_1];                                     // Created during build
+CRGBSet led_array_1(strip_0(LED_NUM_0, LED_NUM_0 + LED_NUM_1 - 1)); // Created during build
+uint8_t led_hues_1[LED_NUM_1];                                      // Created during build
 
-CRGBHueDict led_arrays[]{
+CRGBHueDict strips[]{
     {led_array_0, led_hues_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false},  // Created during build
     {led_array_1, led_hues_1, LED_NUM_1, 0, 0, 0, LED_DELAY_1, false}}; // Created during build
 
@@ -58,7 +56,7 @@ void setup()
   // Power-up safety delay
   delay(2000);
   // Initialise each LED strip
-  FastLED.addLeds<STRIP_PHYSICAL_TYPE_0, STRIP_PHYSICAL_PIN_0, STRIP_PHYISCAL_ORDER_0>(leds_0, STRIP_PHYSICAL_LEDS_0); // Created during build
+  FastLED.addLeds<STRIP_PHYSICAL_TYPE_0, STRIP_PHYSICAL_PIN_0, STRIP_PHYISCAL_ORDER_0>(strip_0, STRIP_PHYSICAL_LEDS_0); // Created during build
   // Begin serial
   Serial.begin(BAUDRATE);
   Serial.setTimeout(SERIAL_TIMEOUT);
@@ -89,19 +87,19 @@ void runEffect() // Created during build
 {
   for (uint8_t i = 0; i < STRIP_NUM; i++)
   {
-    switch (led_arrays[i].current_mode)
+    switch (strips[i].current_mode)
     {
     case hash("fadeblack"):
-      FadeBlack::run(led_arrays[i].crgb_array, led_arrays[i].strip_len, led_arrays[i].current_mode);
+      FadeBlack::run(strips[i].crgb_array, strips[i].strip_len, strips[i].current_mode);
       break;
     case hash("setbright"):
-      SetBrightness::run(led_arrays[i].current_mode, led_arrays[i].previous_mode, led_arrays[i].effect_setup);
+      SetBrightness::run(strips[i].current_mode, strips[i].previous_mode, strips[i].effect_setup);
       break;
     case hash("solidcolor"):
-      SolidColor::run(led_arrays[i].crgb_array, led_arrays[i].strip_len, led_arrays[i].current_mode);
+      SolidColor::run(strips[i].crgb_array, strips[i].strip_len, strips[i].current_mode);
       break;
     case hash("rainbowcycle"):
-      RainbowCycle::run(led_arrays[i].crgb_array, led_arrays[i].hue_array, led_arrays[i].strip_len, led_arrays[i].effect_setup, led_arrays[i].refresh_delay, led_arrays[i].current_time);
+      RainbowCycle::run(strips[i].crgb_array, strips[i].hue_array, strips[i].strip_len, strips[i].effect_setup, strips[i].refresh_delay, strips[i].current_time);
       break;
     }
   }
@@ -130,7 +128,7 @@ void loop()
       else if (serial_input == SERIAL_TERMINATE && reading_message)
       {
         clearSerial();
-        led_arrays[current_strip].effect_setup = true;
+        strips[current_strip].effect_setup = true;
       }
       // Inside message contents
       else if (reading_message)
@@ -158,10 +156,10 @@ void loop()
           if (Serial.readBytes(serial_mode_input, serial_input) == (uint32_t)serial_input)
           {
             // Store previous mode
-            led_arrays[current_strip].previous_mode = led_arrays[current_strip].current_mode;
+            strips[current_strip].previous_mode = strips[current_strip].current_mode;
             // Store current mode
             serial_mode_input[serial_input] = '\0';
-            led_arrays[current_strip].current_mode = hash(serial_mode_input);
+            strips[current_strip].current_mode = hash(serial_mode_input);
           }
           else
           {

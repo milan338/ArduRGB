@@ -8,13 +8,15 @@
 #define STRIP_PHYSICAL_CORRECTION    // Empty for none
 #define STRIP_PHYSICAL_LEDS_0 20     // Calculated during build
 
-#define LED_STRIP_0 0  // Virtual LED strip
-#define LED_NUM_0 10   // Number of LEDs on strip
-#define LED_DELAY_0 25 // Used for effect 'refresh rate'
+#define LED_STRIP_0 0        // Virtual LED strip
+#define LED_NUM_0 10         // Number of LEDs on strip
+#define LED_DELAY_0 25       // Used for effect 'refresh rate'
+#define LED_REVERSED_0 FALSE // Reverse direction of effects
 
-#define LED_STRIP_1 0  // Virtual LED strip
-#define LED_NUM_1 10   // Number of LEDs on strip
-#define LED_DELAY_1 25 // Used for effect 'refresh rate'
+#define LED_STRIP_1 0        // Virtual LED strip
+#define LED_NUM_1 10         // Number of LEDs on strip
+#define LED_DELAY_1 25       // Used for effect 'refresh rate'
+#define LED_REVERSED_1 FALSE // Reverse direction of effects
 //----------------------------------------------------------//
 
 #define STRIP_NUM 2 // Calculated during build
