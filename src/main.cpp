@@ -2,6 +2,7 @@
 #include <FastLED.h>
 #include <serial_read.h>
 #include <definitions.h>
+#include <led_strips.h>
 
 // <<<<<<<<<< USER DEFINITIONS >>>>>>>>>> //
 
@@ -130,7 +131,6 @@ void loop()
       {
         clearSerial();
         led_arrays[current_strip].effect_setup = true;
-        // effect_setup = true;
       }
       // Inside message contents
       else if (reading_message)
