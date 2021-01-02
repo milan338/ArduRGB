@@ -10,7 +10,7 @@
 class SetBrightness
 {
 public:
-    static void run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup);
+    static void run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup, uint8_t led_args[]);
 };
 
 #endif // SETBRIGHTNESS_H

@@ -10,7 +10,7 @@
 class SolidColor
 {
 public:
-    static void run(CRGBSet &led_array, uint32_t led_num, uint32_t &serial_mode);
+    static void run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode, uint8_t led_args[]);
 };
 
 #endif // SOLIDCOLOR_H

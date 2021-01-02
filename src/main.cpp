@@ -21,6 +21,7 @@ typedef struct LEDDict
 {
   CRGBSet led_array;
   uint8_t *hue_array;
+  uint8_t *led_args;
   uint16_t led_num;
   uint32_t current_mode;
   uint32_t previous_mode;
@@ -32,18 +33,22 @@ typedef struct LEDDict
 // Array for each led and associated hue values for use in effects
 CRGBSet led_array_0(strip_0(0, LED_NUM_0 - 1)); // Created during build
 uint8_t led_hues_0[LED_NUM_0];                  // Created during build
+uint8_t led_args_0[ARGS_NUM];                   // Created during build
 
 CRGBSet led_array_1(strip_0(LED_NUM_0, LED_NUM_0 + LED_NUM_1 - 1)); // Created during build
 uint8_t led_hues_1[LED_NUM_1];                                      // Created during build
+uint8_t led_args_1[ARGS_NUM];                                       // Created during build
 
 LEDDict strips[]{
-    {led_array_0, led_hues_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false},  // Created during build
-    {led_array_1, led_hues_1, LED_NUM_1, 0, 0, 0, LED_DELAY_1, false}}; // Created during build
+    {led_array_0, led_hues_0, led_args_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false},  // Created during build
+    {led_array_1, led_hues_1, led_args_1, LED_NUM_1, 0, 0, 0, LED_DELAY_1, false}}; // Created during build
 
 // Determine whether to read a message or refresh effects
 bool reading_message = false;
-// Store serial input
-char serial_mode_input[16];
+// Store mode from serial
+char serial_mode_input[EFFECT_NAME_CHARS];
+// Temporarily store effect args
+uint8_t serial_args_input[ARGS_NUM];
 // Store currently selected strip
 uint8_t current_strip = 0;
 // Store current message element to read
@@ -93,10 +98,10 @@ void runEffect() // Created during build
       FadeBlack::run(strips[i].led_array, strips[i].led_num, strips[i].current_mode);
       break;
     case hash("setbright"):
-      SetBrightness::run(strips[i].current_mode, strips[i].previous_mode, strips[i].effect_setup);
+      SetBrightness::run(strips[i].current_mode, strips[i].previous_mode, strips[i].effect_setup, strips[i].led_args);
       break;
     case hash("solidcolor"):
-      SolidColor::run(strips[i].led_array, strips[i].led_num, strips[i].current_mode);
+      SolidColor::run(strips[i].led_array, strips[i].led_num, strips[i].current_mode, strips[i].led_args);
       break;
     case hash("rainbowwave"):
       RainbowWave::run(strips[i].led_array, strips[i].hue_array, strips[i].led_num, strips[i].effect_setup, strips[i].refresh_delay, strips[i].current_time);
@@ -120,15 +125,23 @@ void loop()
       {
         // Reset serial read states
         reading_message = true;
-        // Clear input buffer
+        // Clear input buffers
         memset(serial_mode_input, 0, sizeof(serial_mode_input));
+        memset(serial_args_input, 0, sizeof(serial_args_input));
         serial_counter = 0;
       }
       // End of message
       else if (serial_input == SERIAL_TERMINATE && reading_message)
       {
         clearSerial();
+        // Setup effect before looping
         strips[current_strip].effect_setup = true;
+        // Apply effect
+        strips[current_strip].previous_mode = strips[current_strip].current_mode;
+        strips[current_strip].current_mode = hash(serial_mode_input);
+        // Apply new effect arguments
+        for (uint8_t i = 0; i < ARGS_NUM; i++)
+          strips[current_strip].led_args[i] = serial_args_input[i];
       }
       // Inside message contents
       else if (reading_message)
@@ -155,11 +168,8 @@ void loop()
           // Store char array input as current mode
           if (Serial.readBytes(serial_mode_input, serial_input) == (uint32_t)serial_input)
           {
-            // Store previous mode
-            strips[current_strip].previous_mode = strips[current_strip].current_mode;
-            // Store current mode
+            // Add terminating byte
             serial_mode_input[serial_input] = '\0';
-            strips[current_strip].current_mode = hash(serial_mode_input);
           }
           else
           {
@@ -168,7 +178,22 @@ void loop()
             Serial.println(serial_input);
           }
           break;
+        case 2:
+          // Store effect args
+          if (Serial.readBytes(serial_args_input, serial_input) == (uint32_t)serial_input)
+          {
+            // Add terminating byte
+            serial_args_input[serial_input] = '\0';
+          }
+          else
+          {
+            clearSerial();
+            Serial.print(F("Arguments input stream not of expected size: "));
+            Serial.println(serial_input);
+          }
+          break;
         }
+        // Read next part of message
         serial_counter++;
       }
       // Remove serial input not part of valid message
