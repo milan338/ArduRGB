@@ -1,0 +1,18 @@
+[user_config]
+
+[platformio]
+; Environment(s) to build for
+; Leave empty to build for all environments
+; https://docs.platformio.org/en/latest/boards/index.html#boards
+default_envs =
+
+[common]
+; Upload port for serial upload
+; Leave empty for automatic detection
+serial_port =
+; Use OTA instead of serial upload
+use_ota = false
+; IP address for OTA uploads
+ota_port = 0.0.0.0
+; Password for OTA uploads
+ota_password = pwd

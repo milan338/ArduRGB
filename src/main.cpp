@@ -26,6 +26,7 @@ uint8_t led_args_0[ARGS_NUM];                   // Created during build
 CRGBSet led_array_1(strip_0(LED_NUM_0, LED_NUM_0 + LED_NUM_1 - 1)); // Created during build
 uint8_t led_hues_1[LED_NUM_1];                                      // Created during build
 uint8_t led_args_1[ARGS_NUM];                                       // Created during build
+
 // Store all relevant information about each LED strip
 LEDDict strips[]{
     {led_array_0, led_hues_0, led_args_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false},  // Created during build
@@ -34,6 +35,7 @@ LEDDict strips[]{
 // Determine whether to read a message or refresh effects
 bool reading_message = false;
 
+// Create object of message type used to read input
 #if MESSAGE_TYPE == _SERIAL
 SerialRead serial_read = SerialRead(reading_message, strips);
 #endif
@@ -76,12 +78,14 @@ void runEffect() // Created during build
 
 void loop()
 {
+  // Read message through defined input type
 #if MESSAGE_TYPE == _SERIAL
   serial_read.readSerial();
 #endif
   // Not reading message
   if (!reading_message)
   {
+    // Update LED strips
     runEffect();
   }
 }

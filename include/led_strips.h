@@ -5,7 +5,7 @@
 #define STRIP_PHYSICAL_PIN_0 4       // GPIO pin strip connected to
 #define STRIP_PHYSICAL_TYPE_0 WS2811 // Strip chipset
 #define STRIP_PHYISCAL_ORDER_0 BRG   // Strip color order
-#define STRIP_PHYSICAL_CORRECTION    // Empty for none
+#define STRIP_PHYSICAL_CORRECTION_0  // Empty for none
 #define STRIP_PHYSICAL_LEDS_0 20     // Calculated during build
 
 #define LED_STRIP_0 0        // Virtual LED strip
