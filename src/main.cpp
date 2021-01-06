@@ -1,4 +1,3 @@
-// Libraries
 #include <Arduino.h>
 #include <FastLED.h>
 #include <definitions.h>
@@ -7,11 +6,12 @@
 #include <structs.h>
 #include <serial_read.h>
 
-// Effects
+// ---------- Effects ---------- //
 #include "effects/set_brightness.h"
 #include "effects/rainbow_wave.h"
 #include "effects/solid_color.h"
 #include "effects/fade_black.h"
+// ---------- Effects ---------- //
 
 #define DEFAULT_BRIGHTNESS 50 // TODO replace with storing last brightness and if not found default to 50
 
