@@ -7,14 +7,15 @@
 #include <serial_read.h>
 
 // ---------- Effects ---------- //
-#include "effects/set_brightness.h"
-#include "effects/rainbow_wave.h"
-#include "effects/solid_color.h"
 #include "effects/fade_black.h"
+#include "effects/rainbow_wave.h"
+#include "effects/set_brightness.h"
+#include "effects/solid_color.h"
 // ---------- Effects ---------- //
 
 #define DEFAULT_BRIGHTNESS 50 // TODO replace with storing last brightness and if not found default to 50
 
+// ---------- LED Definitions ---------- //
 // Physical LED strip arrays from which virtual CRGBSets are created
 CRGBArray<STRIP_PHYSICAL_LEDS_0> strip_0; // Created during build
 
@@ -31,6 +32,7 @@ uint8_t led_args_1[ARGS_NUM];                                       // Created d
 LEDDict strips[]{
     {led_array_0, led_hues_0, led_args_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false},  // Created during build
     {led_array_1, led_hues_1, led_args_1, LED_NUM_1, 0, 0, 0, LED_DELAY_1, false}}; // Created during build
+// ---------- LED Definitions ---------- //
 
 // Determine whether to read a message or refresh effects
 bool reading_message = false;
@@ -45,7 +47,7 @@ void setup()
   // Power-up safety delay
   delay(2000);
   // Initialise each LED strip
-  FastLED.addLeds<STRIP_PHYSICAL_TYPE_0, STRIP_PHYSICAL_PIN_0, STRIP_PHYISCAL_ORDER_0>(strip_0, STRIP_PHYSICAL_LEDS_0); // Created during build
+  FastLED.addLeds<STRIP_PHYSICAL_TYPE_0, STRIP_PHYSICAL_PIN_0, STRIP_PHYSICAL_ORDER_0>(strip_0, STRIP_PHYSICAL_LEDS_0); // Created during build
   // Begin serial
   Serial.begin(BAUDRATE);
   Serial.setTimeout(SERIAL_TIMEOUT);
