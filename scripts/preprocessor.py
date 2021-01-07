@@ -303,10 +303,9 @@ def injectLines(path, separator, injector):
             if line == separator:
                 in_section = not in_section
                 file.write(separator)
-            # Inject new code in between separators
-            elif in_section and inject:
-                injector(file)
-                inject = not inject
+                # Inject new code in between separators
+                if in_section:
+                    injector(file)
             # Write original code
             elif not in_section:
                 file.write(line)
