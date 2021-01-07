@@ -12,7 +12,7 @@ def copyConfig():
     from os.path import abspath, join
     from shutil import copyfile
     base_path = env['PROJECT_DIR']  # type: ignore
-    src_path = abspath(join(base_path, 'scripts', 'user_config.ini.tmp'))
+    src_path = abspath(join(base_path, 'scripts', 'user_config_TMP.ini'))
     target_path = abspath(join(base_path, 'user_config.ini'))
     try:
         copyfile(src_path, target_path)
