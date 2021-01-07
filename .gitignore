@@ -1,5 +1,6 @@
 # ArduRGB
 user_config.ini
+led_strips.h
 
 # PlatformIO
 .pio
