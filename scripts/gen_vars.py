@@ -15,7 +15,7 @@
 # along with ArduRGB.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
-Import("env")  # type: ignore
+Import('env')  # type: ignore
 
 
 def setOTA():

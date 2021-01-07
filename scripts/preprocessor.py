@@ -18,7 +18,7 @@ import sys
 from configparser import ConfigParser
 from os import scandir
 from os.path import abspath, join, isfile
-Import("env")  # type: ignore
+Import('env')  # type: ignore
 
 # Global vars
 virtual_strips = 0
@@ -278,7 +278,6 @@ def setEffects():
                 args = value
                 del args[0]
                 for i, arg in enumerate(args):
-                    print(arg)
                     if i:
                         case_args += ', '
                     case_args += f'strips[i].{arg}'
