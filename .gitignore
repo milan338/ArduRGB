@@ -1,7 +1,7 @@
 # ArduRGB
 user_config.ini
 led_strips.h
-main_ld.cpp
+*/patched/
 
 # PlatformIO
 .pio
