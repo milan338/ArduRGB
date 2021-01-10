@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ArduRGB.  If not, see <https://www.gnu.org/licenses/>.
 
+from os import scandir, remove, listdir, rmdir
+from os.path import abspath, join, isdir
 Import("env")  # type: ignore
 
 config = env.GetProjectConfig()  # type: ignore
@@ -21,8 +23,6 @@ save_patched = config.get('build', 'save_patched')
 
 
 def removePatched(source, target, env):
-    from os import scandir, remove, listdir, rmdir
-    from os.path import abspath, join, isdir
     base_path = env['PROJECT_DIR']
     patch_dir = abspath(join(base_path, 'patched'))
     patch_files = [
@@ -46,5 +46,23 @@ def removePatched(source, target, env):
             print('\033[93m' f'Failed to remove patch directory {patch_dir}')
 
 
+def defaultDefinitions(source, target, env):
+    include_path = env['PROJECT_INCLUDE_DIR']
+    definitions_path = abspath(join(include_path, 'definitions.h'))
+    with open(definitions_path, 'r') as file:
+        data = file.readlines()
+    with open(definitions_path, 'w') as file:
+        for line in data:
+            if '#define MESSAGE_TYPE ' in line:
+                file.write(
+                    '#define MESSAGE_TYPE _SERIAL // Communication interface\n')
+            elif '#define BAUDRATE ' in line:
+                file.write(
+                    '#define BAUDRATE 9600        // Serial communication speed\n')
+            else:
+                file.write(line)
+
+
 if save_patched.lower() == 'false':
-    env.AddPostAction("checkprogsize", removePatched)  # type: ignore
+    env.AddPostAction('checkprogsize', removePatched)  # type: ignore
+env.AddPostAction('checkprogsize', defaultDefinitions)  # type: ignore
