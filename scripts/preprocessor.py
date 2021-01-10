@@ -31,7 +31,7 @@ include_path = env['PROJECT_INCLUDE_DIR']  # type: ignore
 src_path = env['PROJECT_SRC_DIR']  # type: ignore
 # Store import paths
 main_path = abspath(join(src_path, 'main.cpp'))
-patch_dir = abspath(join(src_path, 'patched'))
+patch_dir = abspath(join(base_path, 'patched'))
 patched_path = abspath(join(patch_dir, 'main.cpp'))
 # Setup config reading
 config = ConfigParser()
@@ -344,6 +344,7 @@ def preprocessor(node, run=[]):
 
 def replaceMainPatched(node):
     # Pass patched 'main.cpp' as 'main.cpp'
+    print(patched_path)
     return env.File(patched_path)  # type: ignore
 
 
@@ -356,5 +357,3 @@ def skipAsmFromBuild(node):
 env.AddBuildMiddleware(preprocessor, main_path)  # type: ignore
 # Pass patched 'main.cpp' as 'main.cpp'
 env.AddBuildMiddleware(replaceMainPatched, main_path)  # type: ignore
-# Skip unpatched 'main.cpp' from build
-env.AddBuildMiddleware(skipAsmFromBuild, main_path)  # type: ignore

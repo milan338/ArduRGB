@@ -2,6 +2,7 @@
 user_config.ini
 led_strips.h
 */patched/
+patched/
 
 # PlatformIO
 .pio
