@@ -23,13 +23,27 @@
 #include <serial_read.h>
 
 // ---------- Effects ---------- //
+/*
+#include "effects/effect.h"
+*/
 // ---------- Effects ---------- //
 
 #define DEFAULT_BRIGHTNESS 50 // TODO replace with storing last brightness and if not found default to 50
 
 // ---------- LED Definitions ---------- //
+/*
+// Physical LED strip arrays from which virtual CRGBSets are created
+CRGBArray<STRIP_PHYSICAL_LEDS_0> strip_0;
+
+// Array for each led and associated hue values for use in effects
+CRGBSet led_array_0(strip_0(LED_NUM_0 - 1, 0));
+uint8_t led_hues_0[LED_NUM_0];
+uint8_t led_args_0[ARGS_NUM];
+
+*/
 // Store all relevant information about each LED strip
-LEDDict strips[]{}; // TEMPORARY
+LEDDict strips[]{
+    /*{led_array_0, led_hues_0, led_args_0, LED_NUM_0, 0, 0, 0, LED_DELAY_0, false}*/};
 // ---------- LED Definitions ---------- //
 
 // Determine whether to read a message or refresh effects
@@ -45,6 +59,9 @@ void setup()
   // Power-up safety delay
   delay(2000);
   // ---------- Strip Init ---------- //
+  /*
+  FastLED.addLeds<STRIP_PHYSICAL_TYPE_0, STRIP_PHYSICAL_PIN_0, STRIP_PHYSICAL_ORDER_0>(strip_0, STRIP_PHYSICAL_LEDS_0);
+  */
   // ---------- Strip Init ---------- //
   // Begin serial
   Serial.begin(BAUDRATE);
@@ -55,7 +72,21 @@ void setup()
 }
 
 // ---------- Run Effects ---------- //
-void runEffect() { ; }; // TEMPORARY
+void runEffect()
+{
+  /*
+  for (uint8_t i = 0; i < STRIP_NUM; i++)
+  {
+    switch (strips[i].current_mode)
+    {
+    case hash("effectname"):
+      EffectClass::run(strips[i].arg);
+      break;
+    }
+  }
+  */
+  ;
+}
 // ---------- Run Effects ---------- //
 
 void loop()
