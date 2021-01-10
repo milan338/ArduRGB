@@ -344,7 +344,7 @@ def preprocessor(node, run=[]):
 
 def replaceMainPatched(node):
     # Pass patched 'main.cpp' as 'main.cpp'
-    print(patched_path)
+    print('\033[96m' f'Using {patched_path} in place of {main_path}')
     return env.File(patched_path)  # type: ignore
 
 
