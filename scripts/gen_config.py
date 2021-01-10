@@ -41,3 +41,6 @@ if not configExists():
     sys.exit(
         '"user_config.ini" has been generated in the project root,'
         ' please configure for your hardware.')
+
+elif len(config.get('platformio', 'default_envs')) != 1:
+    sys.exit('Option "default_envs" must contain exactly one environment')
