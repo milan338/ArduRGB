@@ -24,6 +24,7 @@ from tkinter import ttk
 class MainWindow(tk.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.winfo_toplevel().title('ArduRGB LED Configuration')
         self.base_path = abspath(dirname(__file__))
         self.config_path = abspath(
             join(self.base_path, '..', '..', 'user_config.ini'))
@@ -88,10 +89,25 @@ class MainWindow(tk.Frame):
                           command=self.setLeds)])
         # Display all elements
         self.current_row = 0
+        self.dividers = [3, 0]
+        self.columns = 0
+        self.columns_width = 2
         for element in self.elements:
-            element[1].grid(row=self.current_row, column=element[0])
+            element[1].grid(row=self.current_row, column=element[0] +
+                            (self.columns * self.columns_width))
             if element[0] != 0:
                 self.current_row += 1
+            # Track each physical strip section
+            try:
+                if element[2]:
+                    self.dividers[1] += 1
+            except:
+                pass
+            # Start drawing on next 'column' section
+            if self.dividers[1] == self.dividers[0]:
+                self.columns += 1
+                self.current_row = 0
+                self.dividers[1] = 0
 
     def redraw(self):
         # Clear existing ui elements
@@ -168,7 +184,7 @@ class MainWindow(tk.Frame):
                 [0, tk.Label(self, text='<<<<<<<<<<<<<<<<<<<<')])
             # Right-hand side
             self.elements.append(
-                [1, tk.Label(self, text='>>>>>>>>>>>>>>>>>>>>')])
+                [1, tk.Label(self, text='>>>>>>>>>>>>>>>>>>>>'), True])
         elif size == 'SMALL':
             # Left-hand side
             self.elements.append(
