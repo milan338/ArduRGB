@@ -1,6 +1,6 @@
 # ArduRGB
 user_config.ini
-led_strips.h
+user_definitions.h
 */patched/
 patched/
 

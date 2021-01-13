@@ -16,7 +16,7 @@
 
 #include <Arduino.h>
 #include <definitions.h>
-#include <led_strips.h>
+#include <user_definitions.h>
 #include <char_hash.h>
 #include <structs.h>
 #include "serial_read.h"
