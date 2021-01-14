@@ -107,7 +107,7 @@ def writeHeader(lines):
         for key, value in lines.items():
             file.write(f'#define {key} {value}\n')
         file.write(f'\n#define STRIP_NUM {virtual_strips}\n'
-                   f'#define MESSAGE_TYPE _{communication_type.upper()}\n'
+                   f'#define _{communication_type.upper()}\n'
                    f'#define BAUDRATE {monitor_speed}\n\n'
                    f'#define WIFI_SSID "{wifi_ssid}"\n'
                    f'#define WIFI_PASSWORD "{wifi_password}"\n'

@@ -57,7 +57,7 @@ LEDDict strips[]{
 bool reading_message = false;
 
 // Create object of message type used to read input
-#if MESSAGE_TYPE == _SERIAL
+#ifdef _SERIAL
 #include "serial/serial_read.h"
 SerialRead serial_read = SerialRead(reading_message, strips);
 #endif
@@ -111,7 +111,7 @@ void loop()
   handleOTA();
 #endif
 // Read message through defined input type
-#if MESSAGE_TYPE == _SERIAL
+#ifdef _SERIAL
   serial_read.readSerial();
 #endif
   // Not reading message
