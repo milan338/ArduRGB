@@ -20,7 +20,6 @@
 #include <user_definitions.h>
 #include <char_hash.h>
 #include <structs.h>
-#include <serial_read.h>
 
 // ---------- Effects ---------- //
 /*
@@ -51,6 +50,7 @@ bool reading_message = false;
 
 // Create object of message type used to read input
 #if MESSAGE_TYPE == _SERIAL
+#include "serial/serial_read.h"
 SerialRead serial_read = SerialRead(reading_message, strips);
 #endif
 
