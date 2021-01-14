@@ -29,6 +29,7 @@ def setOTA():
         env.Append(UPLOADERFLAGS=['--auth', ota_password])  # type: ignore
         env['UPLOAD_PROTOCOL'] = 'espota'  # type: ignore
         env['UPLOAD_PORT'] = ota_port  # type: ignore
+        env.Append(CPPDEFINES=['OTA'])  # type: ignore
     # Set upload port as serial port
     elif use_ota.lower() == 'false':
         serial_port = config.get('common', 'serial_port')

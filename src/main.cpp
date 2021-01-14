@@ -20,6 +20,14 @@
 #include <user_definitions.h>
 #include <char_hash.h>
 #include <structs.h>
+// Optional dependencies
+#ifdef OTA
+#define HANDLE_WIFI
+#include <ota.h>
+#endif
+#ifdef HANDLE_WIFI
+#include <wifi_handler.h>
+#endif
 
 // ---------- Effects ---------- //
 /*
@@ -68,6 +76,13 @@ void setup()
   Serial.setTimeout(SERIAL_TIMEOUT);
   // Recovery delay
   delay(1);
+#ifdef HANDLE_WIFI
+  beginWifi();
+#endif
+#ifdef OTA
+  initOTA();
+#endif
+  // Set global LED brightness
   FastLED.setBrightness(DEFAULT_BRIGHTNESS);
 }
 
@@ -91,7 +106,11 @@ void runEffect()
 
 void loop()
 {
-  // Read message through defined input type
+  // Handle OTA
+#ifdef OTA
+  handleOTA();
+#endif
+// Read message through defined input type
 #if MESSAGE_TYPE == _SERIAL
   serial_read.readSerial();
 #endif
