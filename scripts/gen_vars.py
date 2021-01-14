@@ -15,10 +15,13 @@
 # along with ArduRGB.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+from os import remove
+from os.path import abspath, join, isfile
 Import('env')  # type: ignore
 
 
 def setOTA():
+    base_path = env['PROJECT_DIR']  # type: ignore
     config = env.GetProjectConfig()  # type: ignore
     # Should use OTA or serial upload
     use_ota = config.get('common', 'use_ota')
@@ -26,9 +29,14 @@ def setOTA():
     if use_ota.lower() == 'true':
         ota_port = config.get('common', 'ota_port')
         ota_password = config.get('common', 'ota_password')
-        env.Append(UPLOADERFLAGS=['--auth', ota_password])  # type: ignore
-        env['UPLOAD_PROTOCOL'] = 'espota'  # type: ignore
-        env['UPLOAD_PORT'] = ota_port  # type: ignore
+        ota_path = abspath(join(base_path, 'OTA.TMP'))
+        if isfile(ota_path):
+            # Remove temporary OTA flag
+            remove(ota_path)
+        else:
+            env.Append(UPLOADERFLAGS=['--auth', ota_password])  # type: ignore
+            env['UPLOAD_PROTOCOL'] = 'espota'  # type: ignore
+            env['UPLOAD_PORT'] = ota_port  # type: ignore
         env.Append(CPPDEFINES=['OTA'])  # type: ignore
     # Set upload port as serial port
     elif use_ota.lower() == 'false':
