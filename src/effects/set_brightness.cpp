@@ -26,5 +26,4 @@ void SetBrightness::run(uint32_t &current_mode, uint32_t previous_mode, bool &ef
     current_mode = previous_mode;
     // Set global brightness
     FastLED.setBrightness(led_args[0]);
-    FastLED.show();
 }

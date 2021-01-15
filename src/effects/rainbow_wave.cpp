@@ -34,5 +34,4 @@ void RainbowWave::run(CRGBSet &led_array, uint8_t hue_array[], uint16_t led_num,
         for (uint16_t i = 0; i < led_num; i++)
             led_array[i] = CHSV(hue_array[i]--, 255, 255);
     }
-    FastLED.show();
 }

@@ -31,5 +31,4 @@ void FadeBlack::run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode
     }
     // Ensure all LEDs cleared
     _fillSolid(led_array, led_num, CRGB(0, 0, 0));
-    FastLED.show();
 }

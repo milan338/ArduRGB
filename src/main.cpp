@@ -119,5 +119,6 @@ void loop()
   {
     // Update LED strips
     runEffect();
+    FastLED.show();
   }
 }
