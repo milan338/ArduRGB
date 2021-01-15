@@ -19,6 +19,8 @@
 
 #include <FastLED.h>
 
-void fillSolid(CRGBSet &led_array, uint32_t led_num, CRGB colors);
+void _fillSolid(CRGBSet &led_array, uint32_t led_num, CRGB colors);
+void _fadeToBlackBy(CRGBSet &led_array, uint32_t led_num, uint8_t fadeby);
+void _nscale8(CRGBSet &led_array, uint32_t led_num, uint8_t scale);
 
 #endif // LEDUTIL_H

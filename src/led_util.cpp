@@ -17,10 +17,23 @@
 #include <FastLED.h>
 #include "led_util.h"
 
-void fillSolid(CRGBSet &led_array, uint32_t led_num, CRGB colors)
+void _fillSolid(CRGBSet &led_array, uint32_t led_num, CRGB colors)
 {
     for (uint16_t i = 0; i < led_num; i++)
     {
         led_array[i] = colors;
+    }
+}
+
+void _fadeToBlackBy(CRGBSet &led_array, uint32_t led_num, uint8_t fadeby)
+{
+    _nscale8(led_array, led_num, 255 - fadeby);
+}
+
+void _nscale8(CRGBSet &led_array, uint32_t led_num, uint8_t scale)
+{
+    for (uint16_t i = 0; i < led_num; i++)
+    {
+        led_array[i].nscale8(scale);
     }
 }
