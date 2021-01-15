@@ -287,9 +287,10 @@ def setDefinitions(file_path):
         for i in range(virtual_strips):
             default_effect = strip_defines[i]['LED_EFFECT']
             if default_effect != 'NULL':
-                print(default_effect)
-            file.write(
-                '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, 0, 0, 0, LED_DELAY_{i}, false''}')
+                out_line = '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, hash({default_effect}), 0, 0, LED_DELAY_{i}, true''}'
+            else:
+                out_line = '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, 0, 0, 0, LED_DELAY_{i}, false''}'
+            file.write(out_line)
             # Not last struct element
             if i < virtual_strips - 1:
                 file.write(',')
