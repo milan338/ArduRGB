@@ -18,11 +18,13 @@
 #include <user_definitions.h>
 #include "board_info.h"
 
-void BoardInfo::run(uint32_t &current_mode)
+void BoardInfo::run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup)
 {
 #include <identifiers.h>
-    // Set current mode to none
-    current_mode = 0;
+    // Don't restart already running effects
+    effect_setup = false;
+    // Re-run last run effect to refresh with new brightness
+    current_mode = previous_mode;
     // Include type of message to send
 #ifdef _SERIAL
 #include "serial/serial_write.h"

@@ -25,7 +25,7 @@
 class BoardInfo
 {
 public:
-    static void run(uint32_t &current_mode);
+    static void run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup);
 };
 
 #endif // BOARDINFO_H
