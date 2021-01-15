@@ -21,7 +21,7 @@ void RainbowWave::run(CRGBSet &led_array, uint8_t hue_array[], uint16_t led_num,
 {
     if (effect_setup)
     {
-        // Set initial colours that will be shifted through the main sequence
+        // Set initial colors that will be shifted through the main sequence
         for (uint16_t i = 0; i < led_num; i++)
             hue_array[i] = 255 / led_num * i;
         effect_setup = false;
