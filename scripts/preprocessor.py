@@ -57,6 +57,12 @@ def getLeds():
                     f' (identifier must be >= 0)')
             leds_output[f'STRIP_PHYSICAL_{strip_id}'] = strip_id
             physical_strips += 1
+    # Attributes that should not be defined in uppercase
+    reg_attr = [
+        'physical_correction']
+    # Attributes that should be defined as char arrays
+    char_attr = [
+        'led_effect']
     # Get attributes for all physical LED strips
     physical_attr = {
         'physical_pin': 'STRIP_PHYSICAL_PIN',
@@ -66,10 +72,16 @@ def getLeds():
         'physical_leds': 'STRIP_PHYSICAL_LEDS'}
     for i in range(physical_strips):
         for key, value in physical_attr.items():
-            if key == 'physical_correction':
-                leds_output[f'{value}_{i}'] = config['leds'][f'{key}_{i}']
+            out_str = config['leds'][f'{key}_{i}']
+            if key in reg_attr:
+                leds_output[f'{value}_{i}'] = out_str
+            elif key in char_attr:
+                leds_output[f'{value}_{i}'] = f'"{out_str}"'
             else:
-                leds_output[f'{value}_{i}'] = config['leds'][f'{key}_{i}'].upper()
+                leds_output[f'{value}_{i}'] = out_str.upper()
+            # Handle empty input
+            if not out_str:
+                leds_output[f'{value}_{i}'] = 'NULL'
     # Get all virtual LED strips
     for key in config['leds']:
         if 'led_strip_' in key:
@@ -88,7 +100,16 @@ def getLeds():
         'led_reversed': 'LED_REVERSED'}
     for i in range(virtual_strips):
         for key, value in virtual_attr.items():
-            leds_output[f'{value}_{i}'] = config['leds'][f'{key}_{i}'].upper()
+            out_str = config['leds'][f'{key}_{i}']
+            if key in reg_attr:
+                leds_output[f'{value}_{i}'] = out_str
+            elif key in char_attr:
+                leds_output[f'{value}_{i}'] = f'"{out_str}"'
+            else:
+                leds_output[f'{value}_{i}'] = out_str.upper()
+            # Handle empty input
+            if not out_str:
+                leds_output[f'{value}_{i}'] = 'NULL'
     return(leds_output)
 
 
@@ -107,8 +128,6 @@ def writeHeader(lines):
             f'#define {pio_platform.upper()}\n'
             f'#define _{communication_type.upper()}\n\n')
         for key, value in lines.items():
-            if not value:
-                value = 'NULL'
             file.write(f'#define {key} {value}\n')
         file.write(f'\n#define STRIP_NUM {virtual_strips}\n'
                    f'#define P_STRIP_NUM {physical_strips}\n'
@@ -207,6 +226,7 @@ def setDefinitions(file_path):
             #     {'LED_STRIP': 0,
             #      'LED_NUM': 10,
             #      'LED_DELAY': 25,
+            #      'LED_EFFECT': NULL,
             #      'LED_REVERSED': FALSE}]
             # Initialise empty structure for each virtual strip
             # Position in array corresponds to strip identifier
@@ -265,6 +285,9 @@ def setDefinitions(file_path):
         file.write('// Store all relevant information about each LED strip\n'
                    'LEDDict strips[]{\n')
         for i in range(virtual_strips):
+            default_effect = strip_defines[i]['LED_EFFECT']
+            if default_effect != 'NULL':
+                print(default_effect)
             file.write(
                 '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, 0, 0, 0, LED_DELAY_{i}, false''}')
             # Not last struct element
