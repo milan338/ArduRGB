@@ -35,7 +35,9 @@
 */
 // ---------- Effects ---------- //
 
-#define DEFAULT_BRIGHTNESS 50 // TODO replace with storing last brightness and if not found default to 50
+// ---------- Defines ---------- //
+#define DEFAULT_BRIGHTNESS 50
+// ---------- Defines ---------- //
 
 // ---------- LED Definitions ---------- //
 /*
