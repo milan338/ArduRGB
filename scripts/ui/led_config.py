@@ -70,8 +70,9 @@ class MainWindow(tk.Frame):
                                   command=lambda i=i, j=j: self.delVirtualStrip(i, j))])
                 self.createEntry(text='LEDs: ', validatecommand=(
                     self.vcmd, '%P'), insert=v_strip['leds'])
-                self.createEntry('Delay: ', validatecommand=(
+                self.createEntry(text='Delay: ', validatecommand=(
                     self.vcmd, '%P'), insert=v_strip['delay'])
+                self.createEntry(text='Effect: ', insert=v_strip['effect'])
                 self.createCheckbutton(
                     text='Reversed: ', insert=v_strip['reversed'])
             # Section footer
@@ -80,12 +81,15 @@ class MainWindow(tk.Frame):
                 [1, tk.Button(self, text='New Virtual Strip',
                               command=lambda i=i: self.newVirtualStrip(i))])
             self.createSeparator(size='LARGE')
-        # Bottom of page
+        # Sidebar
         self.elements.append(
-            [0, tk.Button(self, text='New Physical Strip',
+            [1, tk.Button(self, text='New Physical Strip',
                           command=self.newPhysicalStrip)])
         self.elements.append(
-            [1, tk.Button(self, text='Save Changes',
+            [1, tk.Button(self, text='    Undo changes   ',
+                          command=lambda: print('tmp'))])
+        self.elements.append(
+            [1, tk.Button(self, text='    Save Changes    ',
                           command=self.setLeds)])
         # Display all elements
         self.current_row = 0
@@ -134,6 +138,7 @@ class MainWindow(tk.Frame):
         self.led_data[parent]['strips'].append(
             {'leds': 0,
              'delay': 0,
+             'effect': '',
              'reversed': 'false'})
         self.redraw()
 
@@ -250,8 +255,8 @@ class MainWindow(tk.Frame):
                     self.v_strip_data = {
                         'leds': self.led_config[f'led_num_{j}'],
                         'delay': self.led_config[f'led_delay_{j}'],
-                        'reversed': self.led_config[f'led_reversed_{j}'].lower()
-                    }
+                        'effect': self.led_config[f'led_effect_{j}'],
+                        'reversed': self.led_config[f'led_reversed_{j}'].lower()}
                     self.strip_data['strips'].append(self.v_strip_data)
             self.led_data.append(self.strip_data)
 
