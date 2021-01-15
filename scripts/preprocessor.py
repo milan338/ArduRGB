@@ -84,6 +84,7 @@ def getLeds():
         'led_strip': 'LED_STRIP',
         'led_num': 'LED_NUM',
         'led_delay': 'LED_DELAY',
+        'led_effect': 'LED_EFFECT',
         'led_reversed': 'LED_REVERSED'}
     for i in range(virtual_strips):
         for key, value in virtual_attr.items():
@@ -106,6 +107,8 @@ def writeHeader(lines):
             f'#define {pio_platform.upper()}\n'
             f'#define _{communication_type.upper()}\n\n')
         for key, value in lines.items():
+            if not value:
+                value = 'NULL'
             file.write(f'#define {key} {value}\n')
         file.write(f'\n#define STRIP_NUM {virtual_strips}\n'
                    f'#define P_STRIP_NUM {physical_strips}\n'
