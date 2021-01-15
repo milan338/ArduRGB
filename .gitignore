@@ -1,6 +1,7 @@
 # ArduRGB
 user_config.ini
 user_definitions.h
+identifiers.h
 */patched/
 patched/
 OTA.TMP
