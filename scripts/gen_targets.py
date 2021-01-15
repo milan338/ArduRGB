@@ -18,9 +18,7 @@ Import('env')  # type: ignore
 
 
 def callback(source, target, env):
-    import sys
-    # Stop further build process
-    sys.exit('\033[96m' 'Task completed successfully')
+    print('\033[96m' 'Task completed successfully')
 
 
 env.AddCustomTarget(  # type: ignore
