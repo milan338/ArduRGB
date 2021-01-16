@@ -78,9 +78,11 @@ void setup()
   Serial.setTimeout(SERIAL_TIMEOUT);
   // Recovery delay
   delay(1);
+// Begin Wi-Fi handler
 #ifdef HANDLE_WIFI
   beginWifi();
 #endif
+// Begin OTA handler
 #ifdef OTA
   initOTA();
 #endif
