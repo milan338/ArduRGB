@@ -40,6 +40,8 @@ void LedsOff::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mod
         // Reset current effects
         for (uint8_t i = 0; i < STRIP_NUM; i++)
         {
+            strips[i].effect_setup = true;
+            strips[i].previous_mode = strips[i].current_mode;
             strips[i].current_mode = 0;
         }
     }

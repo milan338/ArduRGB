@@ -45,7 +45,6 @@ void getEeprom(LEDDict *strips)
     {
         // Get last strip mode
         EEPROM.get(address, strips[i].current_mode);
-        Serial.print(strips[i].current_mode);
         address += sizeof(strips->current_mode);
         // Get last strip mode args
         uint8_t j = 0;
@@ -53,7 +52,6 @@ void getEeprom(LEDDict *strips)
         {
             Serial.print(".");
             EEPROM.get(address, strips[i].led_args[j]);
-            Serial.print(strips[i].led_args[j]);
             address += sizeof(strips->led_args[0]);
             j++;
         } while (strips[i].led_args[j - 1] != '\0');
@@ -74,7 +72,6 @@ void setEeprom(LEDDict *strips)
             strips[i].current_mode = strips[i].previous_mode;
         // Set last strip mode
         EEPROM.put(address, strips[i].current_mode);
-        Serial.print(strips[i].current_mode);
         address += sizeof(strips->current_mode);
         // Set last strip mode args
         uint8_t j = 0;
@@ -82,7 +79,6 @@ void setEeprom(LEDDict *strips)
         {
             Serial.print(".");
             EEPROM.put(address, strips[i].led_args[j]);
-            Serial.print(strips[i].led_args[j]);
             address += sizeof(strips->led_args[0]);
             j++;
             // Stop reading at null-terminator and handle missing terminator
