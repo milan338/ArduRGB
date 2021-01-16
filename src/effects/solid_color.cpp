@@ -18,10 +18,13 @@
 #include "led_util.h"
 #include "solid_color.h"
 
-void SolidColor::run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode, uint8_t led_args[])
+void SolidColor::run(CRGBSet &led_array, uint32_t led_num, uint8_t led_args[], bool &effect_setup)
 {
-    // Set current mode to none
-    current_mode = 0;
-    // Set strip colors
-    _fillSolid(led_array, led_num, CRGB(led_args[0], led_args[1], led_args[2]));
+    // Only run once
+    if (effect_setup)
+    {
+        // Set strip colors
+        _fillSolid(led_array, led_num, CRGB(led_args[0], led_args[1], led_args[2]));
+        effect_setup = false;
+    }
 }
