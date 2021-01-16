@@ -320,7 +320,7 @@ def setDefinitions(file_path):
             if default_effect != 'NULL':
                 out_line = '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, hash({default_effect}), 0, 0, LED_DELAY_{i}, true''}'
             else:
-                out_line = '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, 0, 0, 0, LED_DELAY_{i}, false''}'
+                out_line = '    {'f'led_array_{i}, led_hues_{i}, led_args_{i}, LED_NUM_{i}, 0, 0, 0, LED_DELAY_{i}, true''}'
             file.write(out_line)
             # Not last struct element
             if i < virtual_strips - 1:
