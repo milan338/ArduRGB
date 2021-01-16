@@ -366,7 +366,12 @@ def setDefinitions(file_path):
                 for i, arg in enumerate(args):
                     if i:
                         case_args += ', '
-                    case_args += f'strips[i].{arg}'
+                    # Effect requires whole LEDDict
+                    if 'strips' in arg:
+                        case_args += 'strips'
+                    # Effect requires LEDDict member
+                    else:
+                        case_args += f'strips[i].{arg}'
                 file.write(f'    case hash("{case_str}"):\n'
                            f'      {case_class}::run({case_args});\n'
                            f'      break;\n')
