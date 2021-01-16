@@ -19,6 +19,7 @@
 
 void RainbowCycle::run(CRGBSet &led_array, uint8_t hue_array[], uint16_t led_num, bool &effect_setup, uint32_t refresh_delay, uint32_t &current_time)
 {
+    // Only run once
     if (effect_setup)
     {
         // Initial color - only 0th element of array is used to represent all colors
