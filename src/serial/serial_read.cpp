@@ -54,9 +54,9 @@ void SerialRead::readSerial()
             {
                 // Reset serial read states
                 reading_message = true;
-                // Clear input buffers
-                memset(serial_mode_input, 0, sizeof(serial_mode_input));
-                memset(serial_args_input, 0, sizeof(serial_args_input));
+                // // Clear input buffers
+                // memset(serial_mode_input, 0, sizeof(serial_mode_input));
+                // memset(serial_args_input, 0, sizeof(serial_args_input));
                 serial_counter = 0;
             }
             // End of message
@@ -96,10 +96,9 @@ void SerialRead::readSerial()
                 case 1:
                     // Store char array input as current mode
                     if (Serial.readBytes(serial_mode_input, serial_input) == (uint32_t)serial_input)
-                    {
                         // Add terminating byte
                         serial_mode_input[serial_input] = '\0';
-                    }
+                    // Reset serial reading
                     else
                     {
                         clearSerial();
@@ -107,13 +106,16 @@ void SerialRead::readSerial()
                         Serial.println(serial_input);
                     }
                     break;
+                // Store effect args
                 case 2:
-                    // Store effect args
-                    if (Serial.readBytes(serial_args_input, serial_input) == (uint32_t)serial_input)
-                    {
+                    // Keep previous effect args to store in EEPROM
+                    if (strips[current_strip].current_mode == hash("ledsoff"))
+                        break;
+                    // Read serial input to array
+                    else if (Serial.readBytes(serial_args_input, serial_input) == (uint32_t)serial_input)
                         // Add terminating byte
                         serial_args_input[serial_input] = '\0';
-                    }
+                    // Reset serial reading
                     else
                     {
                         clearSerial();

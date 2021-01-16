@@ -86,6 +86,11 @@ void setup()
 #ifdef OTA
   initOTA();
 #endif
+// Setup EEPROM for espressif devices
+#ifdef ESP_EEPROM
+#include <EEPROM.h>
+  EEPROM.begin((STRIP_NUM * ARGS_NUM * sizeof(strips->led_args[0])) + (STRIP_NUM * sizeof(strips->current_mode)));
+#endif
   // Set global LED brightness
   FastLED.setBrightness(DEFAULT_BRIGHTNESS);
 }

@@ -17,6 +17,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <structs.h>
+#include <definitions.h>
 #include <user_definitions.h>
 #include "eepromio.h"
 
@@ -36,45 +37,60 @@ bool updateEeprom(uint16_t &address)
 
 void getEeprom(LEDDict *strips)
 {
+    Serial.print(F("Reading data from EEPROM"));
     // Start at EEPROM address 0
     uint16_t address = 0;
-    // Don't read data if the number of strips has changed
-    if (!updateEeprom(address))
-        return;
     // Get last effect and effect args for each strip
     for (uint8_t i = 0; i < STRIP_NUM; i++)
     {
         // Get last strip mode
         EEPROM.get(address, strips[i].current_mode);
-        address += sizeof(strips[i].current_mode);
+        Serial.print(strips[i].current_mode);
+        address += sizeof(strips->current_mode);
         // Get last strip mode args
         uint8_t j = 0;
         do
         {
+            Serial.print(".");
             EEPROM.get(address, strips[i].led_args[j]);
-            address += sizeof(strips[i].led_args[0]);
+            Serial.print(strips[i].led_args[j]);
+            address += sizeof(strips->led_args[0]);
             j++;
         } while (strips[i].led_args[j - 1] != '\0');
     }
+    Serial.println(F("\nData read from EEPROM"));
 }
 
 void setEeprom(LEDDict *strips)
 {
-    // Start at EEPROM address 1 - skip strip num identifier
-    uint16_t address = 1;
+    Serial.print(F("Writing data to EEPROM"));
+    // Start at EEPROM address 0
+    uint16_t address = 0;
     // Set last effect and effect args for each strip
     for (uint8_t i = 0; i < STRIP_NUM; i++)
     {
+        // Check if effect has stopped itself - set current effect to 0
+        if (!strips[i].current_mode && strips[i].previous_mode)
+            strips[i].current_mode = strips[i].previous_mode;
         // Set last strip mode
         EEPROM.put(address, strips[i].current_mode);
-        address += sizeof(strips[i].current_mode);
+        Serial.print(strips[i].current_mode);
+        address += sizeof(strips->current_mode);
         // Set last strip mode args
         uint8_t j = 0;
         do
         {
+            Serial.print(".");
             EEPROM.put(address, strips[i].led_args[j]);
-            address += sizeof(strips[i].led_args[0]);
+            Serial.print(strips[i].led_args[j]);
+            address += sizeof(strips->led_args[0]);
             j++;
-        } while (strips[i].led_args[i - 1] != '\0');
+            // Stop reading at null-terminator and handle missing terminator
+        } while (strips[i].led_args[j - 1] && j < ARGS_NUM);
     }
+    // Commit EEPROM changes
+#ifdef ESP_EEPROM
+    EEPROM.commit();
+#endif
+    Serial.println(F("\nData written to EEPROM"));
 }

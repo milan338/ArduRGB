@@ -14,14 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with ArduRGB.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef EEPROMIO_H
-#define EEPROMIO_H
+#ifndef LEDSOFF_H
+#define LEDSOFF_H
 
 #include <Arduino.h>
 #include <structs.h>
 
-bool updateEeprom(uint16_t &address);
-void getEeprom(LEDDict *strips);
-void setEeprom(LEDDict *strips);
+#define LEDSOFF EFFECT
 
-#endif // EEPROMIO_H
+class LedsOff
+{
+public:
+    static void run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode);
+};
+
+#endif // LEDSOFF_H
