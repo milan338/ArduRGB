@@ -69,8 +69,12 @@ void SerialRead::readSerial()
                 strips[current_strip].previous_mode = strips[current_strip].current_mode;
                 strips[current_strip].current_mode = hash(serial_mode_input);
                 // Apply new effect arguments
-                for (uint8_t i = 0; i < ARGS_NUM; i++)
-                    strips[current_strip].led_args[i] = serial_args_input[i];
+                // Keep previous effect args to store in EEPROM
+                if (strips[current_strip].current_mode != hash("ledsoff"))
+                {
+                    for (uint8_t i = 0; i < ARGS_NUM; i++)
+                        strips[current_strip].led_args[i] = serial_args_input[i];
+                }
             }
             // Inside message contents
             else if (reading_message)
@@ -108,11 +112,8 @@ void SerialRead::readSerial()
                     break;
                 // Store effect args
                 case 2:
-                    // Keep previous effect args to store in EEPROM
-                    if (strips[current_strip].current_mode == hash("ledsoff"))
-                        break;
                     // Read serial input to array
-                    else if (Serial.readBytes(serial_args_input, serial_input) == (uint32_t)serial_input)
+                    if (Serial.readBytes(serial_args_input, serial_input) == (uint32_t)serial_input)
                         // Add terminating byte
                         serial_args_input[serial_input] = '\0';
                     // Reset serial reading
