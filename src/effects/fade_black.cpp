@@ -19,16 +19,27 @@
 #include "led_util.h"
 #include "fade_black.h"
 
-void FadeBlack::run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode)
+void FadeBlack::run(CRGBSet &led_array, uint8_t hue_array[], uint32_t led_num, uint32_t &current_mode, bool &effect_setup)
 {
-    // Set current mode to none
-    current_mode = 0;
-    // Fade LED strip to black
-    for (uint8_t i = 0; i < 256 / FADE_BY; i++)
+    // Only run once
+    if (effect_setup)
     {
-        _fadeToBlackBy(led_array, led_num, FADE_BY);
-        FastLED.show();
+        hue_array[0] = 0;
+        effect_setup = false;
     }
-    // Ensure all LEDs cleared
-    _fillSolid(led_array, led_num, CRGB(0, 0, 0));
+    // Main sequence
+    if (hue_array[0] < 256 / FADE_BY)
+    {
+        // Fade LED strip to black
+        _fadeToBlackBy(led_array, led_num, FADE_BY);
+        hue_array[0]++;
+    }
+    // Fading complete
+    else
+    {
+        // Set current mode to none
+        current_mode = 0;
+        // Ensure all LEDs are off
+        _fillSolid(led_array, led_num, CRGB(0, 0, 0));
+    }
 }

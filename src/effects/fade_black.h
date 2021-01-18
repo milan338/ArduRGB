@@ -26,7 +26,7 @@
 class FadeBlack
 {
 public:
-    static void run(CRGBSet &led_array, uint32_t led_num, uint32_t &current_mode);
+    static void run(CRGBSet &led_array, uint8_t hue_array[], uint32_t led_num, uint32_t &current_mode, bool &effect_setup);
 };
 
 #endif // FADEBLACK_H

@@ -32,10 +32,17 @@ void ToggleLeds::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_
     {
         // Save current state to EEPROM
         setEeprom(strips);
-        // Fade all strips to black
+        // Set all strips to effect setup state for fading to black
         for (uint8_t i = 0; i < STRIP_NUM; i++)
+            strips[i].effect_setup = true;
+        // Fade all strips to black
+        for (uint8_t i = 0; i <= 256 / FADE_BY; i++)
         {
-            FadeBlack::run(strips[i].led_array, strips[i].led_num, strips[i].current_mode);
+            for (uint8_t j = 0; j < STRIP_NUM; j++)
+            {
+                FadeBlack::run(strips[j].led_array, strips[j].hue_array, strips[j].led_num, strips[j].current_mode, strips[j].effect_setup);
+            }
+            FastLED.show();
         }
         // Reset current effects
         for (uint8_t i = 0; i < STRIP_NUM; i++)
