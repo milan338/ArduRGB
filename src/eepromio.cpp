@@ -67,7 +67,7 @@ void setEeprom(LEDDict *strips)
     // Set last effect and effect args for each strip
     for (uint8_t i = 0; i < STRIP_NUM; i++)
     {
-        // Check if effect has stopped itself - set current effect to 0
+        // Check if effect has had its current mode altered
         if (!strips[i].current_mode && strips[i].previous_mode)
             strips[i].current_mode = strips[i].previous_mode;
         // Set last strip mode
