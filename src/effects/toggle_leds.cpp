@@ -21,14 +21,19 @@
 #include "fade_black.h"
 #include "toggle_leds.h"
 
-void ToggleLeds::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode)
+bool &ToggleLeds::isOn()
 {
     // Set initial state as 'on'
-    static uint8_t is_on = true;
+    static bool is_on = true;
+    return is_on;
+}
+
+void ToggleLeds::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode)
+{
     // Set current mode for selected strip as previous mode
     current_mode = previous_mode;
     // Turn off sequence
-    if (is_on)
+    if (ToggleLeds::isOn())
     {
         // Save current state to EEPROM
         setEeprom(strips);
@@ -58,5 +63,5 @@ void ToggleLeds::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_
         // Restore last state
         getEeprom(strips);
     }
-    is_on = !is_on;
+    ToggleLeds::isOn() = !ToggleLeds::isOn();
 }

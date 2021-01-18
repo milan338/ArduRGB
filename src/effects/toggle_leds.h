@@ -25,6 +25,7 @@
 class ToggleLeds
 {
 public:
+    static bool &isOn();
     static void run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode);
 };
 

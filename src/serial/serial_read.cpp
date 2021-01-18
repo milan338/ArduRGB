@@ -19,6 +19,7 @@
 #include <user_definitions.h>
 #include <char_hash.h>
 #include <structs.h>
+#include "effects/toggle_leds.h"
 #include "serial_read.h"
 
 SerialRead::SerialRead(bool &reading_message, LEDDict *strips)
@@ -54,9 +55,6 @@ void SerialRead::readSerial()
             {
                 // Reset serial read states
                 reading_message = true;
-                // // Clear input buffers
-                // memset(serial_mode_input, 0, sizeof(serial_mode_input));
-                // memset(serial_args_input, 0, sizeof(serial_args_input));
                 serial_counter = 0;
             }
             // End of message
@@ -68,12 +66,14 @@ void SerialRead::readSerial()
                 // Apply effect
                 strips[current_strip].previous_mode = strips[current_strip].current_mode;
                 strips[current_strip].current_mode = hash(serial_mode_input);
-                // Apply new effect arguments
                 // Keep previous effect args to store in EEPROM
-                if (strips[current_strip].current_mode != hash("ledsoff"))
+                if (strips[current_strip].current_mode != hash("toggleleds"))
                 {
+                    // Apply new effect arguments
                     for (uint8_t i = 0; i < ARGS_NUM; i++)
                         strips[current_strip].led_args[i] = serial_args_input[i];
+                    // Reset 'off' state
+                    ToggleLeds::isOn() = true;
                 }
             }
             // Inside message contents
