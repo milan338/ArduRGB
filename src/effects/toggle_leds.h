@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with ArduRGB.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef LEDSOFF_H
-#define LEDSOFF_H
+#ifndef TOGGLELEDS_H
+#define TOGGLELEDS_H
 
 #include <Arduino.h>
 #include <structs.h>
 
-#define LEDSOFF EFFECT
+#define TOGGLELEDS EFFECT
 
-class LedsOff
+class ToggleLeds
 {
 public:
     static void run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode);
 };
 
-#endif // LEDSOFF_H
+#endif // TOGGLELEDS_H

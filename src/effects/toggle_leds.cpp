@@ -19,9 +19,9 @@
 #include <user_definitions.h>
 #include "eepromio.h"
 #include "fade_black.h"
-#include "leds_off.h"
+#include "toggle_leds.h"
 
-void LedsOff::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode)
+void ToggleLeds::run(LEDDict *strips, uint32_t &current_mode, uint32_t previous_mode)
 {
     // Set initial state as 'on'
     static uint8_t is_on = true;
