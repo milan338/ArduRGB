@@ -20,6 +20,7 @@
 #include <user_definitions.h>
 #include <char_hash.h>
 #include <structs.h>
+#include <globals.h>
 // Optional dependencies
 #ifdef OTA
 #define HANDLE_WIFI
@@ -57,6 +58,8 @@ LEDDict strips[]{
 
 // Determine whether to read a message or refresh effects
 bool reading_message = false;
+// Define global brightness value
+uint8_t current_brightness = DEFAULT_BRIGHTNESS;
 
 // Create object of message type used to read input
 #ifdef _SERIAL

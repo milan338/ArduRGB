@@ -14,19 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with ArduRGB.  If not, see <https://www.gnu.org/licenses/>.
 
-#include <Arduino.h>
-#include <FastLED.h>
-#include <globals.h>
-#include "set_brightness.h"
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
-void SetBrightness::run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup, uint8_t led_args[])
-{
-    // Don't restart already running effects
-    effect_setup = false;
-    // Re-run last run effect to refresh with new brightness
-    current_mode = previous_mode;
-    // Update global brightness value
-    current_brightness = led_args[0];
-    // Set global brightness
-    FastLED.setBrightness(led_args[0]);
-}
+#include <Arduino.h>
+
+extern uint8_t current_brightness;
+
+#endif // GLOBALS_H

@@ -16,7 +16,12 @@
 
 #include <Arduino.h>
 #include <user_definitions.h>
+#include <globals.h>
 #include "board_info.h"
+
+#ifdef _SERIAL
+#include "serial/serial_write.h"
+#endif
 
 void BoardInfo::run(uint32_t &current_mode, uint32_t previous_mode, bool &effect_setup)
 {
@@ -27,7 +32,8 @@ void BoardInfo::run(uint32_t &current_mode, uint32_t previous_mode, bool &effect
     current_mode = previous_mode;
     // Include type of message to send
 #ifdef _SERIAL
-#include "serial/serial_write.h"
     sendSerial(F(OUT_SERIAL_MESSAGE));
+    sendSerial(current_brightness);
+    sendSerial("\r\n");
 #endif
 }

@@ -152,16 +152,21 @@ def writeHeader(lines):
 
 def createIdentifiers():
     # Generate string literals to send to UI client
+    default_brightness = config['common']['default_brightness']
     device_name = config['common']['device_name']
     prog_version = env_config.get('project', 'version')
-    output_items = [device_name, pio_env,
-                    prog_version, physical_strips, virtual_strips]
+    output_items = [device_name,
+                    pio_env,
+                    prog_version,
+                    physical_strips,
+                    virtual_strips]
     # Formatters for message output types
 
     def serialOutput():
-        serial_output = str(len(output_items))
+        serial_output = str(len(output_items) + 1)
         for item in output_items:
             serial_output += f',{item}'
+        serial_output += ','
         return serial_output
 
     outputters = {
