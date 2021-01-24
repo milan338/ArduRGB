@@ -19,6 +19,10 @@
 
 #include <Arduino.h>
 
-void sendSerial(const __FlashStringHelper *message);
+template <typename T>
+void sendSerial(T message)
+{
+    Serial.print(message);
+}
 
 #endif // SERIALWRITE_H
