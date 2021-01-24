@@ -46,7 +46,6 @@ void SerialRead::readSerial()
     if (Serial.available())
     {
         int serial_input = Serial.read();
-        Serial.println(serial_input);
         // Handle invalid reads
         if (serial_input != -1)
         {
