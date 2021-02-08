@@ -16,6 +16,7 @@
 
 import sys
 import tkinter as tk
+from copy import deepcopy
 from configparser import ConfigParser
 from os.path import abspath, join, dirname, isfile
 from tkinter import ttk
@@ -29,6 +30,7 @@ class MainWindow(tk.Frame):
         self.config_path = abspath(
             join(self.base_path, '..', '..', 'user_config.ini'))
         self.config = ConfigParser()
+        self.init_data = None
         self.getLeds()
         self.draw()
 
@@ -86,8 +88,8 @@ class MainWindow(tk.Frame):
             [1, tk.Button(self, text='New Physical Strip',
                           command=self.newPhysicalStrip)])
         self.elements.append(
-            [1, tk.Button(self, text='    Undo changes   ',
-                          command=lambda: print('tmp'))])
+            [1, tk.Button(self, text='Undo All Changes ',
+                          command=self.undoChanges)])
         self.elements.append(
             [1, tk.Button(self, text='    Save Changes    ',
                           command=self.setLeds)])
@@ -144,6 +146,10 @@ class MainWindow(tk.Frame):
 
     def delVirtualStrip(self, parent, this):
         self.led_data[parent]['strips'].pop(this)
+        self.redraw()
+
+    def undoChanges(self):
+        self.led_data = deepcopy(self.init_data)
         self.redraw()
 
     def createEntry(self, text, validatecommand=None, insert=None):
@@ -259,6 +265,9 @@ class MainWindow(tk.Frame):
                         'reversed': self.led_config[f'led_reversed_{j}'].lower()}
                     self.strip_data['strips'].append(self.v_strip_data)
             self.led_data.append(self.strip_data)
+        # Save initial state for 'revert changes' button
+        if self.init_data is None:
+            self.init_data = deepcopy(self.led_data)
 
     def setLeds(self):
         # Get current config file data
