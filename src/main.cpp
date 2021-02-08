@@ -112,7 +112,6 @@ void runEffect()
     }
   }
   */
-  ;
 }
 // ---------- Run Effects ---------- //
 
