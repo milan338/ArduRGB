@@ -84,10 +84,8 @@ void SerialRead::readSerial()
                 case 0:
                     // Ensure strip selected is valid
                     if (serial_input < STRIP_NUM && serial_input >= 0)
-                    {
                         // Set currently selected strip
                         current_strip = serial_input;
-                    }
                     else
                     {
                         clearSerial();
