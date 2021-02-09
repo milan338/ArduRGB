@@ -71,6 +71,8 @@ You can use the additional project tasks for additional configuration options.
 
 If using OTA uploads, remember to run the project's `Flash OTA` through serial task on first upload.
 
+Once ready, run the project's `upload` task.
+
 Detailed information can be found in the [wiki](https://github.com/milan338/ArduRGB/wiki).
 
 ## Usage
