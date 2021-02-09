@@ -1,4 +1,4 @@
-# FreeRGB
+# ArduRGB
 
 ![issues](https://img.shields.io/github/issues/milan338/ArduRGB?style=flat-square)
 ![size](https://img.shields.io/github/repo-size/milan338/ArduRGB?style=flat-square)
