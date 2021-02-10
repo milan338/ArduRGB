@@ -19,7 +19,7 @@
 
 void _fillSolid(CRGBSet &led_array, uint32_t led_num, CRGB colors)
 {
-    for (uint16_t i = 0; i < led_num; i++)
+    for (uint32_t i = 0; i < led_num; i++)
     {
         led_array[i] = colors;
     }
@@ -32,7 +32,7 @@ void _fadeToBlackBy(CRGBSet &led_array, uint32_t led_num, uint8_t fadeby)
 
 void _nscale8(CRGBSet &led_array, uint32_t led_num, uint8_t scale)
 {
-    for (uint16_t i = 0; i < led_num; i++)
+    for (uint32_t i = 0; i < led_num; i++)
     {
         led_array[i].nscale8(scale);
     }

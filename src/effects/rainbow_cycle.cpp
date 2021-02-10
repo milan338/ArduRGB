@@ -17,7 +17,7 @@
 #include <FastLED.h>
 #include "rainbow_cycle.h"
 
-void RainbowCycle::run(CRGBSet &led_array, uint8_t hue_array[], uint16_t led_num, bool &effect_setup, uint32_t refresh_delay, uint32_t &current_time)
+void RainbowCycle::run(CRGBSet &led_array, uint8_t hue_array[], uint32_t led_num, bool &effect_setup, uint32_t refresh_delay, uint32_t &current_time)
 {
     // Only run once
     if (effect_setup)
@@ -31,7 +31,7 @@ void RainbowCycle::run(CRGBSet &led_array, uint8_t hue_array[], uint16_t led_num
     {
         current_time = millis();
         // Main sequence
-        for (uint16_t i = 0; i < led_num; i++)
+        for (uint32_t i = 0; i < led_num; i++)
             led_array[i] = CHSV(hue_array[0], 255, 255);
         hue_array[0]--;
     }
