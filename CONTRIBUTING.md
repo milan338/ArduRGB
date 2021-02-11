@@ -67,5 +67,6 @@ Some general guidelines:
       ...
   }
   ```
+- Use the `F()` macro where possible when using long strings, for example in debug prints, to store them in progmem.
 
 Where readability can be improved, however, exceptions can of course be made.
