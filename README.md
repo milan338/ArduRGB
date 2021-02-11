@@ -42,7 +42,7 @@ ArduRGB is a fully-featured, lightweight, highly customisable LED controller usi
 #### Hardware
 
 *These are mostly recommendations for usable performance.*
-*See the [wiki](https://github.com/milan338/ArduRGB/wiki) for more information.*
+*See the [wiki](https://github.com/milan338/ArduRGB/wiki/Prerequisites) for more information.*
 
 - **MCU** = ATmega328 equivalent or better
 - **SRAM** >= 2 KB
@@ -73,7 +73,7 @@ If using OTA uploads, remember to run the project's `Flash OTA` through serial t
 
 Once ready, run the project's `upload` task.
 
-Detailed information can be found in the [wiki](https://github.com/milan338/ArduRGB/wiki).
+Detailed information can be found in the [wiki](https://github.com/milan338/ArduRGB/wiki/Uploading).
 
 ## Usage
 
