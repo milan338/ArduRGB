@@ -64,7 +64,7 @@ uint8_t current_brightness = DEFAULT_BRIGHTNESS;
 // Create object of message type used to read input
 #ifdef _SERIAL
 #include "serial/serial_read.h"
-SerialRead serial_read = SerialRead(reading_message, strips);
+SerialRead SerialReader = SerialRead(reading_message, strips);
 #endif
 
 void setup()
@@ -123,7 +123,7 @@ void loop()
 #endif
 // Read message through defined input type
 #ifdef _SERIAL
-  serial_read.readSerial();
+  SerialReader.readSerial();
 #endif
   // Not reading message
   if (!reading_message)
