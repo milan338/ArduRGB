@@ -70,3 +70,20 @@ Some general guidelines:
 - Use the `F()` macro where possible when using long strings, for example in debug prints, to store them in progmem.
 
 Where readability can be improved, however, exceptions can of course be made.
+
+## The Preprocessor
+
+This project utilises PlatformIO's advanced build tools.
+
+You may notice lines such as 
+
+```c++
+// ---------- Effects ---------- //
+/*
+#include "effects/effect.h"
+*/
+// ---------- Effects ---------- //
+```
+This is just notation for the preprocessor to know where to inject specific code based on the separators.
+
+The commented sections indicate what type of code is injected.
